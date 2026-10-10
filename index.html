@@ -411,6 +411,56 @@ label.cb input{width:18px;height:18px;accent-color:var(--ink);margin-top:2px;fle
 .odo3-hint{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font:600 11.5px var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .odo3:hover .odo3-hint b{color:var(--ink)}
 .odo3-hint b{font-weight:600;color:var(--muted)}
+
+/* journal sub-views, charts, passport, codes, photos, weather, first-open motion */
+:root{--svc-c:#4F8EF0;--fuel-c:#2A4A78}
+.segctl{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.seg-btn{background:none;border:0;border-left:1px solid var(--line);padding:11px 6px;font:600 11.5px var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.seg-btn:first-child{border-left:0}
+.seg-btn[aria-pressed="true"]{background:rgba(255,255,255,.08);color:var(--ink);box-shadow:inset 0 -2px 0 var(--svc-c)}
+.chart-box{border:1px solid var(--line);border-radius:4px;padding:14px 12px 8px;background:rgba(255,255,255,.03)}
+.chart{display:block;width:100%;height:auto;overflow:visible}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.chart .base{stroke:rgba(255,255,255,.25);stroke-width:1}
+.chart .ax{fill:var(--muted);font:500 10px var(--f-body)}
+.own{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted)}
+.own span{display:inline-flex;align-items:center;gap:7px}
+.own i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.own b{color:var(--ink);font-weight:600}
+.passport{border:1px solid var(--line);border-radius:4px;background:rgba(255,255,255,.035);overflow:hidden}
+.pp-head{display:flex;flex-direction:column;gap:4px;padding:16px 16px 14px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(28,105,212,.18),transparent 70%)}
+.pp-head b{font:700 24px/1.1 var(--f-display);letter-spacing:-.02em}
+.pp-head span:last-child{color:var(--muted);font-size:14px}
+.pp-row{display:grid;grid-template-columns:minmax(0,9.5em) minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 16px;border-top:1px solid var(--line);font-size:14px}
+.pp-row:nth-child(2){border-top:0}
+.pp-row span{color:var(--muted)}
+.pp-row b{font-weight:500;min-width:0;overflow-wrap:anywhere}
+.pp-copy{background:none;border:1px solid var(--line);border-radius:3px;color:var(--muted);font:600 10.5px var(--f-body);letter-spacing:.08em;text-transform:uppercase;padding:5px 8px}
+.pp-copy:hover{color:var(--ink);border-color:var(--ink)}
+.codes{display:flex;flex-direction:column;gap:10px}
+.code-out{display:flex;flex-direction:column;gap:6px}
+.code-card{display:flex;flex-direction:column;gap:8px;border:1px solid var(--line);border-radius:4px;padding:14px 16px;background:rgba(255,255,255,.035)}
+.code-card > b{font:700 22px var(--f-display);letter-spacing:.02em}
+.code-card .btn{align-self:flex-start}
+.code-near{display:block;width:100%;text-align:left;background:none;border:1px solid var(--line);border-radius:4px;padding:10px 12px;color:var(--ink);font-size:14px}
+.code-near b{margin-right:8px}
+.photos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.photos:empty{display:none}
+.photos figure{margin:0;position:relative;aspect-ratio:1;border-radius:4px;overflow:hidden;background:var(--soft)}
+.photos img{width:100%;height:100%;object-fit:cover;display:block;max-width:100%}
+.photos .x{position:absolute;top:4px;right:4px;width:26px;height:26px;font-size:15px;background:rgba(0,0,0,.6);color:#fff}
+.vs.wx{border-color:var(--line)}
+.vs.wx svg{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.vs.wx.s-soon{border-color:var(--soon)} .vs.wx.s-soon svg{stroke:var(--soon)}
+.vs.wx b{font-size:16px}
+.seg .on.test{text-shadow:0 0 10px rgba(255,90,31,.9),0 0 22px rgba(255,90,31,.5)}
+@keyframes fillbar{from{width:0}}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}}
+#app.anim .cbs-s i b{animation:fillbar 1.1s cubic-bezier(.2,.8,.2,1) both}
+#app.anim .vs,#app.anim .cbs-row{animation:rise .5s ease-out both}
+#app.anim .cbs-row:nth-child(2){animation-delay:.05s} #app.anim .cbs-row:nth-child(3){animation-delay:.1s} #app.anim .cbs-row:nth-child(4){animation-delay:.15s} #app.anim .cbs-row:nth-child(5){animation-delay:.2s} #app.anim .cbs-row:nth-child(6){animation-delay:.25s}
+@media (prefers-reduced-motion:reduce){#app.anim *{animation:none!important}}
+@media (max-width:400px){.pp-row{grid-template-columns:minmax(0,8em) minmax(0,1fr)}.pp-copy{grid-column:2;justify-self:start}}
 </style>
 
 <main id="app"><p class="loading">Открываю бортжурнал…</p></main>
@@ -710,7 +760,9 @@ function kmRate(){
   if (o.length < 2) return p && p.rate ? p.rate : null;
   const a = o[0], b = o[o.length-1];
   const days = (parse(b.d) - parse(a.d)) / 864e5;
-  if (days < 20 || b.km <= a.km) return p && p.rate ? p.rate : null;
+  // a few weeks of readings say little about a year of driving: prefer the average since purchase until readings span 4 months
+  if ((days < 120 || b.km <= a.km) && p && p.rate) return p.rate;
+  if (days < 20 || b.km <= a.km) return null;
   return (b.km - a.km) / days * 30.4;
 }
 
@@ -773,6 +825,9 @@ function viewSetup(edit){
       <label class="f" for="s-year">Год выпуска<input id="s-year" class="num" name="year" type="number" min="1997" max="2007" value="${esc(c.year)}" required></label>
       <label class="f" for="s-mileage">Пробег сейчас, км<input id="s-mileage" class="num" name="mileage" type="number" min="0" step="1" inputmode="numeric" value="${S && S.mileage != null ? S.mileage : ''}" placeholder="например, 248000" required></label>
       <label class="f" for="s-bought">Дата покупки<input id="s-bought" name="boughtD" type="date" max="${iso(today)}" value="${esc(c.boughtD || '')}"></label>
+      <label class="f" for="s-price">Цена покупки, ₽<input id="s-price" class="num" name="price" type="number" min="0" step="1" inputmode="numeric" value="${c.price != null ? c.price : ''}" placeholder="необязательно"></label>
+      <label class="f" for="s-color">Цвет<input id="s-color" name="color" value="${esc(c.color || '')}" placeholder="Titansilber metallic (354)"></label>
+      <label class="f" for="s-city">Город для погоды<input id="s-city" name="city" value="${esc(c.city || '')}" placeholder="Пятигорск"></label>
       <label class="f" for="s-boughtkm">Пробег при покупке, км<input id="s-boughtkm" class="num" name="boughtKm" type="number" min="0" step="1" inputmode="numeric" value="${c.boughtKm != null ? c.boughtKm : ''}" placeholder="например, 334266"></label>
     </div>
     <label class="cb" for="s-xdrive"><input id="s-xdrive" type="checkbox" name="xdrive" ${c.xdrive?'checked':''}> Полный привод (325xi, 330xi, 330xd)</label>
@@ -1038,6 +1093,7 @@ function viewHomeBMW(){
     ${carArt(c)}
     ${odoCluster()}
     <div class="vs">${vsIcon}<div><b>${vs.t}</b><span>${esc(vs.s)}</span></div></div>
+    ${STANDALONE ? `<div class="vs wx" id="wx">${iconSVG('tires')}<div><b>Резина и погода</b><span>Смотрю прогноз…</span></div></div>` : ''}
     ${saveErr ? `<p class="err">${esc(saveErr)}</p>` : ''}
   </section>
   <section class="section"><div class="section-head"><h2>Сервис</h2><button class="link" data-goto="parts">Все работы</button></div>
@@ -1128,8 +1184,10 @@ function viewCar(){
   const c = S.car, e = ENGINES[c.engine];
   const weak = WEAK.filter(w => w.for(c));
   return `<section class="section">
-    <div class="car-line"><div><p class="eyebrow">BMW ${esc(c.model || e.models)} · ${esc(c.engineName || e.code)}</p><h1>Машина</h1></div></div>
+    <div class="car-line"><div><p class="eyebrow">BMW ${esc(c.model || e.models)} · ${esc(c.engineName || e.code)}</p><h1>Машина.</h1></div><button class="ghost" data-act="edit-car">Изменить</button></div>
     ${carArt(c)}
+    ${passportHTML()}
+    <h2>Жидкости и данные</h2>
     <div class="specs">
       <div class="spec"><span>Мотор</span><b>${esc(c.engineName || e.code)}, ${e.cyl} цил.</b></div>
       <div class="spec"><span>Мощность</span><b>${c.hp ? c.hp + ' л.с.' : esc(e.hp)}</b></div>
@@ -1149,6 +1207,8 @@ function viewCar(){
     </div>
     <p class="note">Объёмы приблизительные. Точный тип масла КПП, АКПП и редуктора подбирайте по VIN в каталоге BMW ETK или по табличкам на агрегатах.</p>
   </section>
+
+  <section class="section"><h2>Коды ошибок</h2>${codesHTML()}</section>
 
   <section class="section"><h2>Ахиллесовы пяты вашей версии</h2>
     <div class="list">${weak.map(w => `<div class="row plain"><span class="name">${esc(w.t)}</span><span class="sub">${esc(w.d)}</span></div>`).join('')}</div>
@@ -1212,9 +1272,16 @@ function viewLog(){
   const y = String(today.getFullYear());
   const year = log.filter(x => x.d.startsWith(y)).reduce((s,x) => s + (x.cost||0), 0);
   const rate = kmRate();
+  const head = `<div class="section-head"><div><p class="eyebrow">История и расходы</p><h1>Журнал</h1></div>
+      ${logView === 'fuel' ? '<button class="btn" data-act="add-fuel">Заправка</button>' : '<button class="btn" data-act="add-entry">Добавить</button>'}</div>${viewLogTabs()}`;
+  const backup = STANDALONE ? `<section class="section"><h2>Резервная копия</h2>
+    <div class="shop"><p class="note">Журнал хранится только в памяти этого телефона. Раз в месяц сохраняйте копию: с ней данные можно вернуть или перенести на другое устройство. Фото в копию не попадают.</p>
+    <div class="qs"><button class="btn" data-act="export">Сохранить копию</button><button class="btn quiet" data-act="import">Загрузить копию</button></div>
+    <input type="file" id="import-file" accept="application/json,.json" hidden></div></section>` : '';
+  if (logView === 'fuel') return `<section class="section">${head}${viewFuel()}</section>${backup}`;
+  if (logView === 'stats') return `<section class="section">${head}${viewStats()}</section>${backup}`;
   return `<section class="section">
-    <div class="section-head"><div><p class="eyebrow">Сервисная история</p><h1>Журнал</h1></div>
-      <button class="btn" data-act="add-entry">Добавить</button></div>
+    ${head}
     <div class="stats">
       <div class="stat"><b>${fmtRub(year)}</b><span>за ${y} год</span></div>
       <div class="stat"><b>${fmtRub(total)}</b><span>всего</span></div>
@@ -1225,10 +1292,7 @@ function viewLog(){
       <span class="k">${fmtKm(x.km)} км${x.note ? ' · ' + esc(x.note) : ''}</span></button>`).join('')
       : '<p class="empty">Записей пока нет. Нажмите «Добавить», чтобы внести замену, ремонт или покупку.</p>'}</div>
   </section>
-  ${STANDALONE ? `<section class="section"><h2>Резервная копия</h2>
-    <div class="shop"><p class="note">Журнал хранится только в памяти этого телефона. Раз в месяц сохраняйте копию: с ней данные можно вернуть или перенести на другое устройство.</p>
-    <div class="qs"><button class="btn" data-act="export">Сохранить копию</button><button class="btn quiet" data-act="import">Загрузить копию</button></div>
-    <input type="file" id="import-file" accept="application/json,.json" hidden></div></section>` : ''}`;
+  ${backup}`;
 }
 
 // ================= sheets =================
@@ -1266,7 +1330,9 @@ function entryForm(pre){
       ${quick ? '' : `<label class="f full" for="e-title">Название (необязательно)<input id="e-title" name="title" value="${esc(x.title||'')}" placeholder="Например: ТО у Сергея, замена масла"></label>`}
       <label class="f" for="e-cost">Стоимость, ₽<input id="e-cost" class="num" name="cost" type="number" min="0" inputmode="numeric" value="${x.cost||''}" placeholder="0"></label>
       <label class="f" for="e-note">Заметка<input id="e-note" name="note" value="${esc(x.note||'')}" placeholder="Бренд, сервис…"></label>
+      ${photoField()}
     </div>
+    ${x.id && STANDALONE ? '<div class="photos" id="photos"></div>' : ''}
     ${quick ? `<input type="hidden" name="items" value="${x.items[0]}">` : `<div class="block"><b>Что меняли</b><div class="picks">${items.map(it => `<label for="pk-${it.id}"><input id="pk-${it.id}" type="checkbox" name="items" value="${it.id}" ${x.items.includes(it.id)?'checked':''}> ${esc(it.name)}</label>`).join('')}</div>
       <p class="note">Можно не отмечать ничего: тогда запись попадёт в журнал как ремонт или покупка.</p></div>`}
     <p class="note">Если вы не знаете точный пробег, укажите примерный: лучше примерно, чем никак.</p>
@@ -1290,6 +1356,300 @@ function sheetMileage(){
     <button class="btn wide" type="submit">Сохранить</button></form>`);
 }
 
+// ================= fuel, ownership costs, mileage history, passport, codes, weather, photos =================
+let logView = 'service';           // journal sub-view: service | fuel | stats
+try { logView = localStorage.getItem(LKEY + ':logview') || 'service'; } catch (e) {}
+
+// ---- fuel: consumption between full tanks ----
+function fuelStats(){
+  const f = (S.fuel || []).slice().sort((a, b) => a.km - b.km || (a.d < b.d ? -1 : 1));
+  const per = {};                  // id -> l/100 km for each full fill that closes an interval
+  let lastFull = null, liters = 0, totL = 0, totKm = 0;
+  for (const x of f) {
+    if (lastFull) liters += x.l;
+    if (x.full) {
+      if (lastFull && x.km > lastFull.km) { per[x.id] = liters / (x.km - lastFull.km) * 100; totL += liters; totKm += x.km - lastFull.km; }
+      lastFull = x; liters = 0;
+    }
+  }
+  const avg = totKm ? totL / totKm * 100 : null;
+  const lastId = Object.keys(per).length ? f.filter(x => per[x.id] != null).pop().id : null;
+  const since = d => f.filter(x => x.d >= d).reduce((s, x) => s + (x.cost || 0), 0);
+  const d30 = iso(new Date(today.getTime() - 30 * 864e5)), d365 = iso(new Date(today.getTime() - 365 * 864e5));
+  return {list: f, per, avg, last: lastId ? per[lastId] : null, month: since(d30), year: since(d365),
+    litres: f.reduce((s, x) => s + x.l, 0), spent: f.reduce((s, x) => s + (x.cost || 0), 0)};
+}
+const fmtL = v => v == null ? '—' : v.toFixed(1).replace('.', ',');
+
+function fuelForm(x){
+  x = x || {d: iso(today), km: S.mileage, l: '', cost: '', full: true, note: ''};
+  return `<form id="fuel" data-fid="${x.id || ''}">
+    <div class="fields">
+      <label class="f" for="fu-d">Дата<input id="fu-d" name="d" type="date" value="${x.d}" max="${iso(today)}" required></label>
+      <label class="f" for="fu-km">Пробег, км<input id="fu-km" class="num" name="km" type="number" min="0" inputmode="numeric" value="${x.km}" required></label>
+      <label class="f" for="fu-l">Литры<input id="fu-l" class="num" name="l" type="number" min="1" step="0.01" inputmode="decimal" value="${x.l}" placeholder="45" required></label>
+      <label class="f" for="fu-c">Сумма, ₽<input id="fu-c" class="num" name="cost" type="number" min="0" inputmode="numeric" value="${x.cost}" placeholder="2 700"></label>
+      <label class="f full" for="fu-n">АЗС, бензин<input id="fu-n" name="note" value="${esc(x.note || '')}" placeholder="Лукойл, АИ-95"></label>
+    </div>
+    <label class="cb" for="fu-full"><input id="fu-full" type="checkbox" name="full" ${x.full ? 'checked' : ''}> Заправил до полного бака. Расход считается между полными заправками.</label>
+    <p class="err" id="fu-err" hidden></p>
+    <button class="btn wide" type="submit">Сохранить заправку</button>
+    ${x.id ? `<button class="danger" type="button" data-act="del-fuel" data-id="${x.id}">Удалить заправку</button>` : ''}
+  </form>`;
+}
+
+// ---- ownership: monthly service + fuel spend ----
+function monthKey(d){ return d.slice(0, 7); }
+function costByMonth(n){
+  const months = [];
+  for (let k = n - 1; k >= 0; k--) { const d = new Date(today.getFullYear(), today.getMonth() - k, 1); months.push(iso(d).slice(0, 7)); }
+  const row = Object.fromEntries(months.map(m => [m, {service: 0, fuel: 0}]));
+  for (const x of S.log || []) if (row[monthKey(x.d)]) row[monthKey(x.d)].service += x.cost || 0;
+  for (const x of S.fuel || []) if (row[monthKey(x.d)]) row[monthKey(x.d)].fuel += x.cost || 0;
+  return months.map(m => ({m, ...row[m]}));
+}
+function costChart(){
+  const data = costByMonth(12), max = Math.max(1, ...data.map(x => x.service + x.fuel));
+  const W = 340, H = 150, bw = 18, gap = (W - 30 - bw * 12) / 11, y0 = 120;
+  const sc = v => v / max * 100;
+  const bars = data.map((x, i) => {
+    const X = 30 + i * (bw + gap), hs = sc(x.service), hf = sc(x.fuel);
+    const lbl = new Date(+x.m.slice(0, 4), +x.m.slice(5) - 1, 1).toLocaleDateString('ru-RU', {month: 'short'}).replace('.', '');
+    return `<rect x="${X}" y="${(y0 - hf).toFixed(1)}" width="${bw}" height="${hf.toFixed(1)}" fill="var(--fuel-c)" rx="1"><title>Топливо ${fmtRub(x.fuel)}</title></rect>
+      <rect x="${X}" y="${(y0 - hf - hs).toFixed(1)}" width="${bw}" height="${hs.toFixed(1)}" fill="var(--svc-c)" rx="1"><title>ТО и ремонт ${fmtRub(x.service)}</title></rect>
+      <text x="${X + bw / 2}" y="${y0 + 14}" text-anchor="middle" class="ax">${lbl}</text>`;
+  }).join('');
+  const k = max >= 10000 ? Math.round(max / 1000) + ' тыс.' : fmtKm(max);
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Траты по месяцам за год">
+    <line x1="30" x2="${W}" y1="${y0 - 100}" y2="${y0 - 100}" class="grid"/><line x1="30" x2="${W}" y1="${y0 - 50}" y2="${y0 - 50}" class="grid"/><line x1="30" x2="${W}" y1="${y0}" y2="${y0}" class="base"/>
+    <text x="0" y="${y0 - 96}" class="ax">${k}</text><text x="0" y="${y0 - 2}" class="ax">0</text>${bars}</svg>`;
+}
+
+// ---- mileage history + forecast to the next round number ----
+function mileagePoints(){
+  const pts = [];
+  const c = S.car || {};
+  if (c.boughtD && c.boughtKm != null) pts.push({d: c.boughtD, km: c.boughtKm, k: 'buy'});
+  for (const o of S.odo || []) pts.push({d: o.d, km: o.km});
+  for (const x of S.log || []) pts.push({d: x.d, km: x.km});
+  for (const x of S.fuel || []) pts.push({d: x.d, km: x.km});
+  pts.push({d: iso(today), km: S.mileage});
+  const by = {};
+  for (const p of pts) if (!by[p.d] || by[p.d].km < p.km) by[p.d] = p;
+  return Object.values(by).sort((a, b) => a.d < b.d ? -1 : 1);
+}
+function mileageChart(){
+  const pts = mileagePoints();
+  if (pts.length < 2) return '<p class="empty">График появится, когда будет хотя бы две отметки пробега, например дата покупки и сегодняшний пробег.</p>';
+  const rate = kmRate();
+  const goal = Math.ceil((S.mileage + 1) / 50000) * 50000;
+  const etaMonths = rate ? (goal - S.mileage) / rate : null;
+  const eta = etaMonths && etaMonths < 240 ? addMonths(today, etaMonths) : null;
+  const t0 = parse(pts[0].d).getTime(), t1 = (eta || today).getTime();
+  const k0 = Math.floor(pts[0].km / 10000) * 10000, k1 = eta ? goal : Math.ceil(S.mileage / 10000) * 10000;
+  const W = 340, H = 170, L = 44, R = 8, T = 10, B = 140;
+  const X = t => L + (t - t0) / Math.max(1, t1 - t0) * (W - L - R), Y = km => B - (km - k0) / Math.max(1, k1 - k0) * (B - T);
+  const line = pts.map((p, i) => `${i ? 'L' : 'M'}${X(parse(p.d).getTime()).toFixed(1)} ${Y(p.km).toFixed(1)}`).join('');
+  const grid = [k0, (k0 + k1) / 2, k1].map(v => `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" class="grid"/><text x="0" y="${Y(v) + 4}" class="ax">${fmtKm(Math.round(v / 1000))} т</text>`).join('');
+  const yr = d => String(new Date(d).getFullYear());
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Пробег с покупки и прогноз">
+    ${grid}
+    <path d="${line}" fill="none" stroke="var(--svc-c)" stroke-width="2"/>
+    ${pts.map(p => `<circle cx="${X(parse(p.d).getTime()).toFixed(1)}" cy="${Y(p.km).toFixed(1)}" r="${p.k === 'buy' ? 3.5 : 2}" fill="var(--svc-c)"/>`).join('')}
+    ${eta ? `<path d="M${X(today.getTime()).toFixed(1)} ${Y(S.mileage).toFixed(1)}L${X(eta.getTime()).toFixed(1)} ${Y(goal).toFixed(1)}" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
+      <circle cx="${X(eta.getTime()).toFixed(1)}" cy="${Y(goal).toFixed(1)}" r="3.5" fill="none" stroke="var(--ink)"/>` : ''}
+    <text x="${L}" y="${H - 6}" class="ax">${yr(t0)}</text><text x="${W - R}" y="${H - 6}" class="ax" text-anchor="end">${yr(t1)}</text></svg>
+    ${eta ? `<p class="note">При ≈ ${fmtKm(rate)} км в месяц ${fmtKm(goal)} км будет примерно в ${eta.toLocaleDateString('ru-RU', {month: 'long'}).replace(/ь$/, 'е').replace(/й$/, 'е').replace(/т$/, 'те')} ${eta.getFullYear()} года.</p>` : ''}`;
+}
+
+function viewLogTabs(){
+  const b = (k, t) => `<button class="seg-btn" data-logview="${k}" aria-pressed="${logView === k}">${t}</button>`;
+  return `<div class="segctl" role="group" aria-label="Раздел журнала">${b('service', 'Ремонты')}${b('fuel', 'Заправки')}${b('stats', 'Расходы')}</div>`;
+}
+function viewFuel(){
+  const fs = fuelStats();
+  const list = fs.list.slice().reverse();
+  return `<div class="stats">
+      <div class="stat"><b>${fmtL(fs.avg)}</b><span>л/100 км, средний</span></div>
+      <div class="stat"><b>${fmtL(fs.last)}</b><span>последний бак</span></div>
+      <div class="stat"><b>${fmtRub(fs.month)}</b><span>за 30 дней</span></div>
+    </div>
+    <button class="btn wide" data-act="add-fuel">Записать заправку →</button>
+    <div class="list">${list.length ? list.map(x => `<button class="entry" data-fuel="${x.id}">
+      <span class="d">${fmtDate(x.d)}</span><span class="t">${fmtL(x.l)} л${x.full ? '' : ' · не полный'}${fs.per[x.id] != null ? ` · ${fmtL(fs.per[x.id])} л/100` : ''}</span><span class="c">${x.cost ? fmtRub(x.cost) : ''}</span>
+      <span class="k">${fmtKm(x.km)} км${x.cost && x.l ? ' · ' + (x.cost / x.l).toFixed(2).replace('.', ',') + ' ₽/л' : ''}${x.note ? ' · ' + esc(x.note) : ''}</span></button>`).join('')
+      : '<p class="empty">Заправок пока нет. Записывайте литры при каждой заправке до полного бака, и приложение посчитает расход.</p>'}</div>`;
+}
+function viewStats(){
+  const p = sincePurchase(), fs = fuelStats();
+  const from = p ? p.d : null;
+  const svc = (S.log || []).filter(x => !from || x.d >= from).reduce((s, x) => s + (x.cost || 0), 0);
+  const fuel = (S.fuel || []).filter(x => !from || x.d >= from).reduce((s, x) => s + (x.cost || 0), 0);
+  const total = svc + fuel, months = p ? Math.max(1, (today - parse(p.d)) / 864e5 / 30.4) : null;
+  const price = S.car && S.car.price;
+  return `<div class="stats">
+      <div class="stat"><b>${fmtRub(total)}</b><span>${p ? 'с покупки' : 'всего'}</span></div>
+      <div class="stat"><b>${p && p.km ? (total / p.km).toFixed(1).replace('.', ',') + ' ₽' : '—'}</b><span>на 1 км</span></div>
+      <div class="stat"><b>${months ? fmtRub(total / months) : '—'}</b><span>в месяц</span></div>
+    </div>
+    <div class="own"><span><i style="background:var(--svc-c)"></i>ТО и ремонт <b>${fmtRub(svc)}</b></span><span><i style="background:var(--fuel-c)"></i>Топливо <b>${fmtRub(fuel)}</b></span>${price ? `<span>С покупкой <b>${fmtRub(total + price)}</b></span>` : ''}</div>
+    <section class="section"><h2>Траты по месяцам</h2><div class="chart-box">${costChart()}</div></section>
+    <section class="section"><h2>Пробег</h2><div class="chart-box">${mileageChart()}</div></section>
+    ${!p ? '<p class="note">Укажите дату и пробег при покупке в «Изменить», чтобы считать траты с момента покупки.</p>' : ''}`;
+}
+
+// ---- car passport ----
+function passportHTML(){
+  const c = S.car, e = ENGINES[c.engine], p = sincePurchase();
+  const own = c.boughtD ? (() => { const m = Math.floor((today - parse(c.boughtD)) / 864e5 / 30.44); const y = Math.floor(m / 12), r = m % 12;
+    return [y ? `${y} ${plural(y, 'год', 'года', 'лет')}` : '', r ? `${r} ${plural(r, 'месяц', 'месяца', 'месяцев')}` : ''].filter(Boolean).join(' ') || 'меньше месяца'; })() : '';
+  const rowp = (k, v, copy) => v ? `<div class="pp-row"><span>${k}</span><b${copy ? ' class="num"' : ''}>${esc(v)}</b>${copy ? `<button class="pp-copy" data-copy="${esc(v)}" aria-label="Скопировать ${k}">Копировать</button>` : ''}</div>` : '';
+  return `<div class="passport">
+    <div class="pp-head"><span class="eyebrow">Паспорт автомобиля</span><b>BMW ${esc(c.model || e.models)}</b><span>${esc(BODIES[c.body])} · ${esc(c.year)}${c.color ? ' · ' + esc(c.color) : ''}</span></div>
+    ${rowp('VIN', c.vin, true)}
+    ${rowp('Госномер', c.plate, true)}
+    ${rowp('Код типа', c.type)}
+    ${rowp('Мотор', `${c.engineName || e.code}${c.hp ? `, ${c.hp} л.с. (${Math.round(c.hp / 1.36)} кВт)` : ''}`)}
+    ${rowp('Коробка', GEARBOX[c.gearbox] + (c.xdrive ? ', xDrive' : ''))}
+    ${rowp('Выпуск модели', c.built ? c.built.split('/').map(s => s.split('-').reverse().join('.')).join(' – ') : '')}
+    ${rowp('Рынок', VIN_REGION[c.region] || c.region)}
+    ${rowp('Цвет', c.color)}
+    ${rowp('Куплена', c.boughtD ? `${fmtDate(c.boughtD)}${c.boughtKm != null ? `, ${fmtKm(c.boughtKm)} км` : ''}${c.price ? `, ${fmtRub(c.price)}` : ''}` : '')}
+    ${rowp('Во владении', own)}
+    ${rowp('Пробег с покупки', p ? `${fmtKm(p.km)} км` : '')}
+  </div>`;
+}
+
+// ---- OBD-II fault codes: standard SAE meanings + what usually causes them on these engines ----
+const CODES = {
+  P0100:'Цепь датчика массового расхода воздуха (ДМРВ)', P0101:'ДМРВ: сигнал вне диапазона', P0102:'ДМРВ: низкий сигнал', P0103:'ДМРВ: высокий сигнал',
+  P0110:'Цепь датчика температуры впускного воздуха', P0115:'Цепь датчика температуры охлаждающей жидкости', P0116:'Датчик температуры ОЖ: сигнал вне диапазона',
+  P0117:'Датчик температуры ОЖ: низкий сигнал', P0118:'Датчик температуры ОЖ: высокий сигнал', P0120:'Цепь датчика положения дроссельной заслонки',
+  P0128:'Охлаждающая жидкость не прогревается до рабочей температуры (термостат)',
+  P0130:'Лямбда-зонд до катализатора: цепь', P0131:'Лямбда-зонд до катализатора: низкое напряжение', P0132:'Лямбда-зонд до катализатора: высокое напряжение',
+  P0133:'Лямбда-зонд до катализатора: медленный отклик', P0134:'Лямбда-зонд до катализатора: нет сигнала', P0135:'Лямбда-зонд до катализатора: цепь подогрева',
+  P0136:'Лямбда-зонд после катализатора: цепь', P0137:'Лямбда-зонд после катализатора: низкое напряжение', P0138:'Лямбда-зонд после катализатора: высокое напряжение',
+  P0140:'Лямбда-зонд после катализатора: нет сигнала', P0141:'Лямбда-зонд после катализатора: цепь подогрева',
+  P0170:'Топливная коррекция: неисправность', P0171:'Слишком бедная смесь', P0172:'Слишком богатая смесь',
+  P0200:'Цепь форсунок', P0201:'Форсунка цилиндра 1', P0202:'Форсунка цилиндра 2', P0203:'Форсунка цилиндра 3', P0204:'Форсунка цилиндра 4',
+  P0300:'Случайные пропуски воспламенения', P0301:'Пропуски воспламенения в цилиндре 1', P0302:'Пропуски воспламенения в цилиндре 2',
+  P0303:'Пропуски воспламенения в цилиндре 3', P0304:'Пропуски воспламенения в цилиндре 4', P0305:'Пропуски воспламенения в цилиндре 5', P0306:'Пропуски воспламенения в цилиндре 6',
+  P0325:'Цепь датчика детонации', P0335:'Цепь датчика положения коленвала', P0340:'Цепь датчика положения распредвала',
+  P0410:'Система вторичного воздуха', P0411:'Система вторичного воздуха: неверный поток', P0420:'Эффективность катализатора ниже порога',
+  P0440:'Система улавливания паров топлива (EVAP)', P0441:'EVAP: неверный поток продувки', P0442:'EVAP: малая утечка', P0455:'EVAP: большая утечка',
+  P0500:'Датчик скорости автомобиля', P0505:'Система регулирования холостого хода', P0506:'Обороты холостого хода ниже нормы', P0507:'Обороты холостого хода выше нормы',
+  P0560:'Напряжение бортовой сети', P0601:'Ошибка памяти блока управления двигателем', P0700:'Неисправность в системе управления АКПП'
+};
+const CODE_HINT = {
+  P0171:'На E46 почти всегда подсос воздуха: трещины в шланге вентиляции картера, гофре впуска, уплотнении щупа, вакуумных трубках. Затем — грязный ДМРВ, слабый бензонасос или фильтр.',
+  P0172:'Проверьте ДМРВ, лямбда-зонды, нет ли масла в воздушном фильтре, не подтекают ли форсунки.',
+  P0300:'Чаще всего свечи или катушки. Поменяйте катушки местами между цилиндрами: если пропуски переехали — виновата катушка.',
+  P0301:'Поменяйте катушку цилиндра 1 с соседней: если ошибка переедет — катушка. Иначе свеча, форсунка, компрессия.',
+  P0302:'Поменяйте катушку цилиндра 2 с соседней: если ошибка переедет — катушка. Иначе свеча, форсунка, компрессия.',
+  P0303:'Поменяйте катушку цилиндра 3 с соседней: если ошибка переедет — катушка. Иначе свеча, форсунка, компрессия.',
+  P0304:'Поменяйте катушку цилиндра 4 с соседней: если ошибка переедет — катушка. Иначе свеча, форсунка, компрессия.',
+  P0128:'Классика BMW: термостат открыт или открывается рано. Мотор долго греется, печка дует прохладным.',
+  P0335:'Датчик коленвала. Симптомы: мотор глохнет на ходу или не заводится на горячую.',
+  P0340:'Датчик распредвала или его разъём. Тяжёлый пуск, неровная работа.',
+  P0505:'На M43 есть клапан холостого хода: часто помогает его чистка. Проверьте и подсос воздуха.',
+  P0506:'Грязный клапан холостого хода или дроссель, подсос воздуха.', P0507:'Подсос воздуха после дросселя или клапан холостого хода.',
+  P0420:'Изношен катализатор или неисправен второй лямбда-зонд. Сначала исключите пропуски воспламенения.',
+  P0101:'Почистите ДМРВ специальным спреем, проверьте гофру после него на трещины.',
+  P0116:'Датчик температуры ОЖ или термостат. Проверьте по стрелке и по диагностике.',
+  P0135:'Подогрев первого лямбда-зонда: сам зонд или предохранитель.', P0141:'Подогрев второго лямбда-зонда: сам зонд или предохранитель.',
+  P0560:'Проверьте аккумулятор, генератор и массы. Напряжение на заведённом моторе должно быть 13,8–14,5 В.'
+};
+function codesHTML(){
+  return `<div class="codes">
+    <label class="f" for="code-q">Код со сканера (OBD-II)<input id="code-q" class="num" autocomplete="off" spellcheck="false" placeholder="P0171" maxlength="6" style="text-transform:uppercase"></label>
+    <div id="code-out" class="code-out"><p class="note">Подключите сканер ELM327 к разъёму OBD под рулём, прочитайте ошибки в приложении (например, Car Scanner) и введите код сюда.</p></div>
+  </div>`;
+}
+function showCode(raw){
+  const out = $('#code-out'); if (!out) return;
+  const q = String(raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (!q) { out.innerHTML = '<p class="note">Введите код, например P0171.</p>'; return; }
+  const exact = CODES[q], near = Object.keys(CODES).filter(k => k.startsWith(q) && k !== q).slice(0, 6);
+  const ai = aiMode() ? `<button class="btn quiet" data-q="Расшифруй код ошибки ${q} для моей машины: что означает, частые причины именно на этом моторе, как проверить по шагам и сколько стоит ремонт.">Спросить ИИ про ${esc(q)} →</button>` : '';
+  if (exact) out.innerHTML = `<div class="code-card"><b class="num">${q}</b><p>${esc(exact)}</p>${CODE_HINT[q] ? `<p class="tip">${esc(CODE_HINT[q])}</p>` : ''}${ai}</div>`;
+  else if (near.length) out.innerHTML = near.map(k => `<button class="code-near" data-code="${k}"><b class="num">${k}</b> ${esc(CODES[k])}</button>`).join('');
+  else out.innerHTML = `<p class="note">${/^P1|^P3|^U|^B|^C/.test(q) ? 'Это код производителя или другой системы, общей расшифровки нет.' : 'Такого кода нет в справочнике.'}</p>${ai}`;
+}
+
+// ---- seasonal tyres by weather (phone version: the Claude page cannot reach weather services) ----
+const WKEY = LKEY + ':weather';
+async function loadWeather(){
+  const city = (S.car && S.car.city) || 'Пятигорск';
+  try { const c = JSON.parse(localStorage.getItem(WKEY)); if (c && c.city === city && Date.now() - c.t < 3 * 3600e3) return c; } catch (e) {}
+  const g = await (await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=ru&format=json`)).json();
+  const loc = g.results && g.results[0]; if (!loc) throw new Error('city');
+  const w = await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.latitude}&longitude=${loc.longitude}&daily=temperature_2m_min,temperature_2m_max&timezone=auto&forecast_days=7`)).json();
+  const c = {city, name: loc.name, t: Date.now(), min: w.daily.temperature_2m_min, max: w.daily.temperature_2m_max};
+  try { localStorage.setItem(WKEY, JSON.stringify(c)); } catch (e) {}
+  return c;
+}
+function tyreAdvice(w){
+  const mean = w.min.reduce((s, v, i) => s + (v + w.max[i]) / 2, 0) / w.min.length;
+  const lo = Math.round(Math.min(...w.min)), hi = Math.round(Math.max(...w.max));
+  const r = S.rec && S.rec.tires;
+  const m = r ? parse(r.d).getMonth() + 1 : null;
+  const on = m == null ? null : (m >= 9 || m <= 1) ? 'winter' : (m >= 2 && m <= 5) ? 'summer' : null;
+  const month = today.getMonth() + 1;
+  let state = 'ok', text;
+  if (mean < 7 && on !== 'winter') { state = 'soon'; text = on === 'summer' ? 'Пора ставить зимнюю резину.' : 'Пора на зимнюю резину, если ещё не поменяли.'; }
+  else if (mean >= 10 && on === 'winter' && month >= 3 && month <= 11) { state = 'soon'; text = 'Можно менять на летнюю резину.'; }
+  else text = on ? `Резина по сезону: ${on === 'winter' ? 'зимняя' : 'летняя'}.` : 'Отметьте смену резины, и приложение подскажет, когда менять.';
+  const law = month === 12 || month <= 2 ? ' С декабря по февраль зимняя резина обязательна.' : (month >= 6 && month <= 8 ? ' С июня по август шипы запрещены.' : '');
+  return {state, text: text + law, line: `${w.name}, 7 дней: от ${lo > 0 ? '+' : ''}${lo} до ${hi > 0 ? '+' : ''}${hi} °C, в среднем ${mean > 0 ? '+' : ''}${mean.toFixed(0)} °C`};
+}
+async function fillWeather(){
+  const el = $('#wx'); if (!el) return;
+  try {
+    const a = tyreAdvice(await loadWeather());
+    if (!$('#wx')) return;
+    $('#wx').className = `vs wx s-${a.state}`;
+    $('#wx').innerHTML = `${iconSVG('tires')}<div><b>${esc(a.text)}</b><span>${esc(a.line)}</span></div>`;
+  } catch (e) { el.hidden = true; }
+}
+
+// ---- photos for journal entries (phone version, IndexedDB) ----
+function photoDB(){
+  return new Promise((res, rej) => { const r = indexedDB.open('e46-photos', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('p', {keyPath: 'id'}).createIndex('entry', 'entry');
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+}
+async function photoTx(mode, fn){ const db = await photoDB(); return new Promise((res, rej) => { const tx = db.transaction('p', mode); const out = fn(tx.objectStore('p')); tx.oncomplete = () => res(out && out.result !== undefined ? out.result : out); tx.onerror = () => rej(tx.error); }); }
+async function shrink(file){
+  const img = await createImageBitmap(file);
+  const k = Math.min(1, 1600 / Math.max(img.width, img.height));
+  const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  return new Promise(r => c.toBlob(r, 'image/jpeg', 0.82));
+}
+async function savePhotos(entryId, files){
+  for (const f of files) { const blob = await shrink(f); await photoTx('readwrite', s => s.put({id: uid() + uid(), entry: entryId, blob, d: iso(today)})); }
+}
+async function listPhotos(entryId){ return photoTx('readonly', s => s.index('entry').getAll(entryId)); }
+async function fillPhotos(entryId){
+  const box = $('#photos'); if (!box) return;
+  let ps = []; try { ps = await listPhotos(entryId); } catch (e) {}
+  if (!$('#photos')) return;
+  $('#photos').innerHTML = ps.map(p => `<figure><img src="${URL.createObjectURL(p.blob)}" alt="Фото к записи"><button type="button" class="x" data-act="del-photo" data-id="${p.id}" data-entry="${entryId}" aria-label="Удалить фото">×</button></figure>`).join('');
+}
+const photoField = () => STANDALONE && window.indexedDB ? `<label class="f full" for="e-photos">Фото (чек, деталь)<input id="e-photos" name="photos" type="file" accept="image/*" multiple></label>` : '';
+
+// ---- first-open motion: cluster self-test on the odometer, service bars fill in ----
+let selfTested = false;
+function clusterTest(){
+  if (selfTested || matchMedia('(prefers-reduced-motion: reduce)').matches) { selfTested = true; return; }
+  const on = document.querySelector('.odo3 .seg .on'); if (!on) return;
+  selfTested = true;
+  const final = on.textContent; on.textContent = '888888'; on.classList.add('test');
+  setTimeout(() => { on.textContent = final; on.classList.remove('test'); }, 900);
+  document.getElementById('app').classList.add('anim');
+  setTimeout(() => document.getElementById('app').classList.remove('anim'), 1600);
+}
+
 // ================= render =================
 function render(){
   document.querySelectorAll('nav.tabs button').forEach(b => b.setAttribute('aria-current', b.dataset.tab === tab ? 'page' : 'false'));
@@ -1300,6 +1660,7 @@ function render(){
   const keepA = $('#ask-out') && !$('#ask-out').hidden ? $('#ask-out').textContent : '';
   $('#app').innerHTML = {home:SKIN === 'bmw' ? viewHomeBMW : SKIN ? viewHomeSkin : viewHome, parts:viewParts, car:viewCar, log:viewLog}[tab]();
   mountTurns();
+  if (tab === 'home' && SKIN === 'bmw') { clusterTest(); if (STANDALONE) fillWeather(); }
   if (tab === 'car') { if ($('#ask-q')) $('#ask-q').value = keepQ; if (keepA) { $('#ask-out').hidden = false; $('#ask-out').textContent = keepA; } }
 }
 function go(t){ tab = t; try { localStorage.setItem(LKEY+':tab', t); } catch(e) {} history.replaceState(null, '', '#'+t); render(); window.scrollTo(0,0); }
@@ -1316,7 +1677,20 @@ document.addEventListener('click', ev => {
   if (t.dataset.q) { $('#ask-q').value = t.dataset.q; return ask(); }
   if (t.dataset.entry) {
     const x = S.log.find(e => e.id === t.dataset.entry); if (!x) return;
-    return openSheet(`<div class="sheet-head"><div><p class="eyebrow">Запись журнала</p><h3>${esc(x.title)}</h3></div><button class="x" data-act="close" aria-label="Закрыть">×</button></div>` + entryForm(x));
+    openSheet(`<div class="sheet-head"><div><p class="eyebrow">Запись журнала</p><h3>${esc(x.title)}</h3></div><button class="x" data-act="close" aria-label="Закрыть">×</button></div>` + entryForm(x));
+    if (STANDALONE && window.indexedDB) fillPhotos(x.id);
+    return;
+  }
+  if (t.dataset.logview) { logView = t.dataset.logview; try { localStorage.setItem(LKEY + ':logview', logView); } catch (e) {} return render(); }
+  if (t.dataset.fuel) {
+    const x = (S.fuel || []).find(e => e.id === t.dataset.fuel); if (!x) return;
+    return openSheet(`<div class="sheet-head"><div><p class="eyebrow">Заправка</p><h3>${fmtDate(x.d)}, ${fmtL(x.l)} л</h3></div><button class="x" data-act="close" aria-label="Закрыть">×</button></div>` + fuelForm(x));
+  }
+  if (t.dataset.code) { $('#code-q').value = t.dataset.code; return showCode(t.dataset.code); }
+  if (t.dataset.copy) {
+    const v = t.dataset.copy, done = () => { t.textContent = 'Скопировано'; setTimeout(() => { t.textContent = 'Копировать'; }, 1500); };
+    try { navigator.clipboard.writeText(v).then(done, () => {}); } catch (e) {}
+    return;
   }
   switch (t.dataset.act) {
     case 'edit-car': editing = true; render(); window.scrollTo(0,0); break;
@@ -1330,9 +1704,17 @@ document.addEventListener('click', ev => {
     }
     case 'del-entry': {
       if (t.dataset.confirm !== '1') { t.dataset.confirm = '1'; t.textContent = 'Нажмите ещё раз, чтобы удалить'; return; }
-      S.log = S.log.filter(e => e.id !== t.dataset.id); rebuildRecords(); save(); closeSheet(); render(); break;
+      S.log = S.log.filter(e => e.id !== t.dataset.id); rebuildRecords(); save(); closeSheet(); render();
+      if (STANDALONE && window.indexedDB) listPhotos(t.dataset.id).then(ps => Promise.all(ps.map(p => photoTx('readwrite', s => s.delete(p.id))))).catch(() => {});
+      break;
     }
     case 'ask': ask(); break;
+    case 'add-fuel': openSheet(`<div class="sheet-head"><div><p class="eyebrow">Журнал</p><h3>Заправка</h3></div><button class="x" data-act="close" aria-label="Закрыть">×</button></div>` + fuelForm()); break;
+    case 'del-fuel': {
+      if (t.dataset.confirm !== '1') { t.dataset.confirm = '1'; t.textContent = 'Нажмите ещё раз, чтобы удалить'; return; }
+      S.fuel = (S.fuel || []).filter(e => e.id !== t.dataset.id); save(); closeSheet(); render(); break;
+    }
+    case 'del-photo': photoTx('readwrite', s => s.delete(t.dataset.id)).then(() => fillPhotos(t.dataset.entry)); break;
     case 'gkey-save': {
       // keep whatever Google issued: only strip spaces, line breaks and quotes picked up while copying
       const k = ($('#gkey').value || '').replace(/\s+/g, '').replace(/^["'«]+|["'»]+$/g, ''), e = $('#gkey-err');
@@ -1358,6 +1740,9 @@ document.addEventListener('submit', ev => {
     if (fd.get('boughtD')) car.boughtD = String(fd.get('boughtD'));
     if (fd.get('boughtKm') !== '' && fd.get('boughtKm') != null) car.boughtKm = Math.round(+fd.get('boughtKm'));
     if (S && S.car && S.car.plate) car.plate = S.car.plate;
+    if (fd.get('price') !== '' && fd.get('price') != null) car.price = Math.round(+fd.get('price'));
+    if (String(fd.get('color') || '').trim()) car.color = String(fd.get('color')).trim();
+    if (String(fd.get('city') || '').trim()) car.city = String(fd.get('city')).trim();
     if (car.xdrive && !['m54','m57'].includes(car.engine)) car.xdrive = false;
     const v = car.vin ? decodeVin(car.vin) : null;
     if (v && !v.error && v.engine === car.engine) Object.assign(car, {model:v.model, engineName:v.engineName, hp:v.hp, type:v.type, region:v.region, built:v.from ? v.from + '/' + v.to : ''});
@@ -1383,6 +1768,19 @@ document.addEventListener('submit', ev => {
     S.log = (S.log||[]).filter(e => e.id !== x.id).concat(x);
     rebuildRecords();
     if (km > S.mileage) { S.mileage = km; }
+    pushOdo(km, d);
+    const files = f.photos && f.photos.files ? [...f.photos.files] : [];
+    save(); closeSheet(); render();
+    if (files.length) savePhotos(x.id, files).catch(() => {});
+    return;
+  }
+  if (f.id === 'fuel') {
+    const d = fd.get('d'), km = Math.round(+fd.get('km')), l = +String(fd.get('l')).replace(',', '.');
+    if (parse(d) > today) { const e = $('#fu-err'); e.hidden = false; e.textContent = 'Дата не может быть в будущем.'; return; }
+    if (!(l > 0)) { const e = $('#fu-err'); e.hidden = false; e.textContent = 'Укажите, сколько литров залили.'; return; }
+    const x = {id: f.dataset.fid || uid(), d, km, l, cost: Math.round(+fd.get('cost') || 0), full: !!fd.get('full'), note: String(fd.get('note') || '').trim()};
+    S.fuel = (S.fuel || []).filter(e => e.id !== x.id).concat(x);
+    if (km > S.mileage) S.mileage = km;
     pushOdo(km, d);
     save(); closeSheet(); render(); return;
   }
@@ -1423,6 +1821,7 @@ document.addEventListener('change', async ev => {
 });
 
 document.addEventListener('input', ev => {
+  if (ev.target.id === 'code-q') return showCode(ev.target.value);
   if (ev.target.id !== 's-vin') return;
   const v = decodeVin(ev.target.value);
   $('#vin-out').innerHTML = vinCard(v);
@@ -1495,7 +1894,7 @@ async function ask(){
 Состояние расходников:
 ${lines}
 Последние записи журнала:
-${recent || '- нет'}
+${recent || '- нет'}${fuelStats().avg ? `\nСредний расход топлива: ${fmtL(fuelStats().avg)} л/100 км.` : ''}
 
 Вопрос владельца: ${q}`;
   if (mode === 'gemini') {
