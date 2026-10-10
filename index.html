@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="E46">
 <meta name="description" content="Бортжурнал BMW E46: регламент ТО под ваш мотор, журнал замен, слабые места.">
-<script>window.APP_VERSION = 'dfa0c4f6a8';</script>
+<script>window.APP_VERSION = 'cf19d878fe';</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -497,6 +497,14 @@ label.cb input{width:18px;height:18px;accent-color:var(--ink);margin-top:2px;fle
 .sum-ic svg{width:20px;height:20px;fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 details.card summary{justify-content:flex-start}
 details.card summary::after{margin-left:auto}
+
+.wx-body{min-width:0;flex:1}
+.wx-days{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:4px;margin-top:12px}
+.wx-days span{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;border-radius:4px;background:rgba(255,255,255,.04)}
+.wx-days span.today{background:rgba(79,142,240,.16)}
+.wx-days i{font-style:normal;font-size:11px;color:var(--muted);text-transform:capitalize}
+.wx-days b{font:600 14px var(--f-body);color:var(--ink)}
+.wx-days small{font-size:11.5px;color:var(--muted)}
 </style>
 
 <div id="splash" aria-hidden="true">
@@ -1640,7 +1648,7 @@ async function getJSON(url){
 async function loadWeather(){
   const city = (S.car && S.car.city) || 'Пятигорск';
   const cached = cachedWeather(city);
-  if (cached && Date.now() - cached.t < 3 * 3600e3) return cached;
+  if (cached && cached.days && Date.now() - cached.t < 3 * 3600e3) return cached;
   // known cities skip the geocoding round trip; others are looked up once and remembered
   let loc = /^пятигорск$/i.test(city.trim()) ? {name: 'Пятигорск', latitude: 44.0486, longitude: 43.0594} : null;
   if (!loc) { try { const g = JSON.parse(localStorage.getItem(WKEY + ':geo')); if (g && g.city === city) loc = g.loc; } catch (e) {} }
@@ -1655,13 +1663,13 @@ async function loadWeather(){
   let c;
   try {
     const w = await getJSON(`https://api.open-meteo.com/v1/forecast?latitude=${loc.latitude}&longitude=${loc.longitude}&daily=temperature_2m_min,temperature_2m_max&timezone=auto&forecast_days=7`);
-    c = {city, name: loc.name, t: Date.now(), min: w.daily.temperature_2m_min, max: w.daily.temperature_2m_max};
+    c = {city, name: loc.name, t: Date.now(), min: w.daily.temperature_2m_min, max: w.daily.temperature_2m_max, days: w.daily.time};
   } catch (e) {
     // second source when open-meteo is unreachable from the phone's network: 3-day forecast from wttr.in
     const w = await getJSON(`https://wttr.in/${encodeURIComponent(loc.name)}?format=j1&lang=ru`);
     const days = w.weather || [];
     if (!days.length) throw e;
-    c = {city, name: loc.name, t: Date.now(), min: days.map(d => +d.mintempC), max: days.map(d => +d.maxtempC)};
+    c = {city, name: loc.name, t: Date.now(), min: days.map(d => +d.mintempC), max: days.map(d => +d.maxtempC), days: days.map(d => d.date)};
   }
   try { localStorage.setItem(WKEY, JSON.stringify(c)); } catch (e) {}
   return c;
@@ -1673,10 +1681,16 @@ function tyreAdvice(w){
   const m = r ? parse(r.d).getMonth() + 1 : null;
   const on = m == null ? null : (m >= 9 || m <= 1) ? 'winter' : (m >= 2 && m <= 5) ? 'summer' : null;
   const month = today.getMonth() + 1;
+  // advice from the forecast and the calendar; a logged tyre change only sharpens it
+  const nightMin = Math.min(...w.min);
   let state = 'ok', text;
-  if (mean < 7 && on !== 'winter') { state = 'soon'; text = on === 'summer' ? 'Пора ставить зимнюю резину.' : 'Пора на зимнюю резину, если ещё не поменяли.'; }
-  else if (mean >= 10 && on === 'winter' && month >= 3 && month <= 11) { state = 'soon'; text = 'Можно менять на летнюю резину.'; }
-  else text = on ? `Резина по сезону: ${on === 'winter' ? 'зимняя' : 'летняя'}.` : 'Отметьте смену резины, и приложение подскажет, когда менять.';
+  if (mean < 7) { state = on === 'winter' ? 'ok' : 'soon'; text = on === 'winter' ? 'Зимняя резина по сезону.' : 'Время зимней резины: средняя ниже +7 °C.'; }
+  else if (month >= 9 || month <= 2) {
+    if (nightMin <= 3) { state = on === 'winter' ? 'ok' : 'soon'; text = on === 'winter' ? 'Зимняя резина уже стоит — вовремя.' : `Ночью до ${nightMin > 0 ? '+' : ''}${Math.round(nightMin)} °C. Готовьте зимнюю резину.`; }
+    else text = 'Пока тепло, летняя резина подходит. Менять на зимнюю — когда средняя опустится ниже +7 °C.';
+  }
+  else if (mean >= 10 && month >= 3 && month <= 5) { state = on === 'summer' ? 'ok' : 'soon'; text = on === 'summer' ? 'Летняя резина по сезону.' : 'Можно ставить летнюю резину.'; }
+  else text = month >= 6 && month <= 8 ? 'Сезон летней резины.' : 'Резину пока не меняйте: держится межсезонье.';
   const law = month === 12 || month <= 2 ? ' С декабря по февраль зимняя резина обязательна.' : (month >= 6 && month <= 8 ? ' С июня по август шипы запрещены.' : '');
   const nd = w.min.length;
   return {state, text: text + law, line: `${w.name}, ${nd} ${plural(nd, 'день', 'дня', 'дней')}: от ${lo > 0 ? '+' : ''}${lo} до ${hi > 0 ? '+' : ''}${hi} °C, в среднем ${mean > 0 ? '+' : ''}${mean.toFixed(0)} °C`};
@@ -1685,7 +1699,10 @@ function paintWeather(w){
   const el = $('#wx'); if (!el) return;
   const a = tyreAdvice(w);
   el.hidden = false; el.className = `vs wx s-${a.state}`;
-  el.innerHTML = `${iconSVG('tires')}<div><b>${esc(a.text)}</b><span>${esc(a.line)}</span></div>`;
+  const dn = d => new Date(d + 'T12:00').toLocaleDateString('ru-RU', {weekday: 'short'}).replace('.', '');
+  const sg = v => (v > 0 ? '+' : '') + Math.round(v);
+  const strip = w.days ? `<div class="wx-days">${w.days.map((d, i) => `<span${i === 0 ? ' class="today"' : ''}><i>${i === 0 ? 'сег' : dn(d)}</i><b>${sg(w.max[i])}°</b><small>${sg(w.min[i])}°</small></span>`).join('')}</div>` : '';
+  el.innerHTML = `${iconSVG('tires')}<div class="wx-body"><b>${esc(a.text)}</b><span>${esc(a.line)}</span>${strip}</div>`;
 }
 async function fillWeather(){
   const el = $('#wx'); if (!el) return;
