@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="E46">
 <meta name="description" content="Бортжурнал BMW E46: регламент ТО под ваш мотор, журнал замен, слабые места.">
-<script>window.APP_VERSION = 'a30c119830';</script>
+<script>window.APP_VERSION = '43b2a49119';</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -542,6 +542,36 @@ details.card summary::after{margin-left:auto}
 #app.anim .ring-fill{animation:ringIn 1.4s cubic-bezier(.2,.8,.2,1) both}
 #app.anim .qa,#app.anim .cond,#app.anim .cbs-card{animation:rise .5s ease-out both}
 #app.anim .cbs-card:nth-child(2){animation-delay:.06s} #app.anim .cbs-card:nth-child(3){animation-delay:.12s} #app.anim .cbs-card:nth-child(4){animation-delay:.18s}
+
+/* ТО and Машина tabs */
+.st-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.st-tile{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:12px 10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.04);color:var(--ink);text-align:left;transition:transform .15s,border-color .2s}
+.st-tile:active{transform:scale(.96)}
+.st-tile b{font:600 24px/1 var(--f-display)}
+.st-tile span{font-size:11.5px;color:var(--muted)}
+.st-tile.s-late b{color:var(--late)} .st-tile.s-soon b{color:var(--soon)} .st-tile.s-ok b{color:var(--svc-c)}
+.st-tile[aria-pressed="true"]{border-color:var(--ink);background:rgba(255,255,255,.09)}
+.jgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.job{display:flex;flex-direction:column;align-items:flex-start;gap:7px;padding:14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.04);color:var(--ink);text-align:left;min-width:0}
+.job:hover{background:rgba(255,255,255,.07)}
+.job b{font:600 14px/1.25 var(--f-body)}
+.job-v{font-size:13px;color:var(--ink)} .job-i{font-size:11.5px;color:var(--muted)}
+.job.s-late .job-v{color:var(--late)} .job.s-soon .job-v{color:var(--soon)} .job.s-none .job-v{color:var(--svc-c)} .job.s-cond .job-v{color:var(--muted)}
+.ring-dash{border:1.5px dashed rgba(255,255,255,.25);border-radius:50%}
+.part-tile .ring{border:1px solid var(--line);border-radius:50%}
+.part-tile .job-v{font-weight:600;letter-spacing:.02em}
+.fluids{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.fluid{display:flex;gap:10px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.04);min-width:0}
+.fluid > span:last-child{display:flex;flex-direction:column;gap:2px;min-width:0}
+.fluid i{font-style:normal;font-size:11.5px;color:var(--muted)}
+.fluid b{font-size:13px;font-weight:500;line-height:1.3}
+.fl-ic{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center}
+.fl-ic svg{width:20px;height:20px;fill:none;stroke:var(--svc-c);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.codes-card{display:flex;flex-direction:column;gap:12px;padding:16px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03)}
+.weak{flex:0 0 72%;max-width:300px;scroll-snap-align:start;display:flex;flex-direction:column;gap:8px;padding:16px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.04)}
+.weak b{font:600 15px/1.25 var(--f-body)}
+.weak p{font-size:13px;line-height:1.5;color:var(--muted);margin:0}
+#app.anim .job{animation:rise .45s ease-out both}
 </style>
 
 <div id="splash" aria-hidden="true">
@@ -1338,6 +1368,59 @@ function viewParts(){
   </section>`;
 }
 
+function askSectionHTML(){
+  return !aiMode() ? '' : aiMode() === 'gemini' && !gKey() ? `<section class="section" id="ask-section"><h2>Спросить ИИ Google про машину</h2>
+    <div class="ask">
+      <p class="note">Ответы даёт Gemini от Google с поиском в интернете: цены, артикулы, советы под ваш мотор. Нужен ваш бесплатный ключ.</p>
+      <ol class="note" style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px">
+        <li>Включите VPN: из России Google ИИ не отвечает.</li>
+        <li>Откройте <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>, войдите в Google и нажмите «Create API key».</li>
+        <li>Скопируйте ключ и вставьте сюда. Он сохранится только на этом телефоне.</li>
+      </ol>
+      <label class="f" for="gkey">Ключ Google AI<input id="gkey" class="num" autocomplete="off" spellcheck="false" placeholder="Вставьте ключ целиком"></label>
+      <p class="err" id="gkey-err" hidden></p>
+      <button class="btn" data-act="gkey-save">Сохранить ключ</button>
+    </div>
+  </section>` : `<section class="section" id="ask-section"><h2>Спросить ${aiMode() === 'claude' ? 'Claude' : 'ИИ Google'} про машину</h2>
+    <div class="ask">
+      <p class="note">Ваш мотор, пробег и история замен уйдут вместе с вопросом.${aiMode() === 'gemini' ? ' Если ответа нет — проверьте, включён ли VPN.' : ''}</p>
+      <div class="qs">
+        <button class="chip" data-q="Что в первую очередь сделать на моей машине с учётом пробега и истории?">Что делать в первую очередь?</button>
+        <button class="chip" data-q="Составь список покупок на ближайшее ТО с конкретными артикулами-аналогами и примерными ценами в рублях.">Список покупок на ТО</button>
+        <button class="chip" data-q="Как подготовить мою машину к зиме?">Подготовка к зиме</button>
+      </div>
+      <label class="f" for="ask-q"><span class="sr" hidden>Вопрос</span><textarea id="ask-q" placeholder="Например: стрелка температуры дёргается, что проверить?"></textarea></label>
+      <button class="btn" data-act="ask" id="ask-btn">Спросить</button>
+      <div class="answer" id="ask-out" hidden></div>
+      ${aiMode() === 'gemini' ? '<button class="link" data-act="gkey-reset" style="align-self:flex-start">Сменить ключ Google AI</button>' : ''}
+    </div>
+  </section>`;
+}
+function howToHTML(){
+  return `  <section class="section"><h2>Как сделать самому</h2>
+    <div class="stack">
+    <details class="card"><summary>Сбросить индикатор сервиса</summary><div class="card-body">
+      <ol><li>Зажигание выключено. Нажмите и держите кнопку сброса суточного пробега на приборке.</li>
+      <li>Поверните ключ в первое положение, не отпуская кнопку. Держите около 5 секунд, пока не появится OIL SERVICE или INSPECTION.</li>
+      <li>Отпустите и снова нажмите и держите кнопку, пока не замигает RESET.</li>
+      <li>Коротко нажмите ещё раз, пока RESET мигает. Индикатор сброшен.</li></ol>
+      <p class="note">Порядок может немного отличаться в зависимости от года выпуска приборной панели.</p></div></details>
+    <details class="card"><summary>Прокачать систему охлаждения</summary><div class="card-body">
+      <ol><li>Холодный мотор. Долейте антифриз в расширительный бачок до метки.</li>
+      <li>Зажигание во второе положение, мотор не заводите. Печка на максимальную температуру, вентилятор на минимум. Электрическая помпа печки начнёт гонять жидкость.</li>
+      <li>Откройте винт прокачки (на бачке или на верхнем патрубке) и держите, пока не пойдёт жидкость без пузырей.</li>
+      <li>Заведите мотор, прогрейте и повторите. Проверьте уровень на холодную на следующий день.</li></ol></div></details>
+    <details class="card"><summary>Проверить подрамник</summary><div class="card-body">
+      <p>На подъёмнике осмотрите места, где задний подрамник крепится к полу (перед задними колёсами). Ищите трещины в металле и следы движения. В багажнике поднимите ковёр и осмотрите пол над точками крепления.</p></div></details>
+    <details class="card"><summary>Лампы на панели</summary><div class="card-body">
+      <ul><li><b>Красная масленка</b> — давление масла упало. Сразу остановиться и заглушить.</li>
+      <li><b>Красный термометр</b> — перегрев. Остановиться, не открывать бачок на горячую.</li>
+      <li><b>Жёлтый круг с пунктиром</b> — износ колодок, сработал датчик.</li>
+      <li><b>Check Engine</b> — ошибка двигателя. Прочитайте код сканером (ELM327 + приложение) и посмотрите, что это.</li>
+      <li><b>Треугольник DSC</b> — система стабилизации отключена из-за ошибки. Часто это датчик ABS или датчик угла поворота руля.</li></ul></div></details>
+    </div>
+  </section>`;
+}
 function viewCar(){
   const c = S.car, e = ENGINES[c.engine];
   const weak = WEAK.filter(w => w.for(c));
@@ -1374,56 +1457,9 @@ function viewCar(){
     <div class="list">${weak.map(w => `<div class="row plain"><span class="name">${esc(w.t)}</span><span class="sub">${esc(w.d)}</span></div>`).join('')}</div>
   </section>
 
-  <section class="section"><h2>Как сделать самому</h2>
-    <div class="stack">
-    <details class="card"><summary>Сбросить индикатор сервиса</summary><div class="card-body">
-      <ol><li>Зажигание выключено. Нажмите и держите кнопку сброса суточного пробега на приборке.</li>
-      <li>Поверните ключ в первое положение, не отпуская кнопку. Держите около 5 секунд, пока не появится OIL SERVICE или INSPECTION.</li>
-      <li>Отпустите и снова нажмите и держите кнопку, пока не замигает RESET.</li>
-      <li>Коротко нажмите ещё раз, пока RESET мигает. Индикатор сброшен.</li></ol>
-      <p class="note">Порядок может немного отличаться в зависимости от года выпуска приборной панели.</p></div></details>
-    <details class="card"><summary>Прокачать систему охлаждения</summary><div class="card-body">
-      <ol><li>Холодный мотор. Долейте антифриз в расширительный бачок до метки.</li>
-      <li>Зажигание во второе положение, мотор не заводите. Печка на максимальную температуру, вентилятор на минимум. Электрическая помпа печки начнёт гонять жидкость.</li>
-      <li>Откройте винт прокачки (на бачке или на верхнем патрубке) и держите, пока не пойдёт жидкость без пузырей.</li>
-      <li>Заведите мотор, прогрейте и повторите. Проверьте уровень на холодную на следующий день.</li></ol></div></details>
-    <details class="card"><summary>Проверить подрамник</summary><div class="card-body">
-      <p>На подъёмнике осмотрите места, где задний подрамник крепится к полу (перед задними колёсами). Ищите трещины в металле и следы движения. В багажнике поднимите ковёр и осмотрите пол над точками крепления.</p></div></details>
-    <details class="card"><summary>Лампы на панели</summary><div class="card-body">
-      <ul><li><b>Красная масленка</b> — давление масла упало. Сразу остановиться и заглушить.</li>
-      <li><b>Красный термометр</b> — перегрев. Остановиться, не открывать бачок на горячую.</li>
-      <li><b>Жёлтый круг с пунктиром</b> — износ колодок, сработал датчик.</li>
-      <li><b>Check Engine</b> — ошибка двигателя. Прочитайте код сканером (ELM327 + приложение) и посмотрите, что это.</li>
-      <li><b>Треугольник DSC</b> — система стабилизации отключена из-за ошибки. Часто это датчик ABS или датчик угла поворота руля.</li></ul></div></details>
-    </div>
-  </section>
+  ${howToHTML()}
 
-  ${!aiMode() ? '' : aiMode() === 'gemini' && !gKey() ? `<section class="section" id="ask-section"><h2>Спросить ИИ Google про машину</h2>
-    <div class="ask">
-      <p class="note">Ответы даёт Gemini от Google с поиском в интернете: цены, артикулы, советы под ваш мотор. Нужен ваш бесплатный ключ.</p>
-      <ol class="note" style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px">
-        <li>Включите VPN: из России Google ИИ не отвечает.</li>
-        <li>Откройте <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>, войдите в Google и нажмите «Create API key».</li>
-        <li>Скопируйте ключ и вставьте сюда. Он сохранится только на этом телефоне.</li>
-      </ol>
-      <label class="f" for="gkey">Ключ Google AI<input id="gkey" class="num" autocomplete="off" spellcheck="false" placeholder="Вставьте ключ целиком"></label>
-      <p class="err" id="gkey-err" hidden></p>
-      <button class="btn" data-act="gkey-save">Сохранить ключ</button>
-    </div>
-  </section>` : `<section class="section" id="ask-section"><h2>Спросить ${aiMode() === 'claude' ? 'Claude' : 'ИИ Google'} про машину</h2>
-    <div class="ask">
-      <p class="note">Ваш мотор, пробег и история замен уйдут вместе с вопросом.${aiMode() === 'gemini' ? ' Если ответа нет — проверьте, включён ли VPN.' : ''}</p>
-      <div class="qs">
-        <button class="chip" data-q="Что в первую очередь сделать на моей машине с учётом пробега и истории?">Что делать в первую очередь?</button>
-        <button class="chip" data-q="Составь список покупок на ближайшее ТО с конкретными артикулами-аналогами и примерными ценами в рублях.">Список покупок на ТО</button>
-        <button class="chip" data-q="Как подготовить мою машину к зиме?">Подготовка к зиме</button>
-      </div>
-      <label class="f" for="ask-q"><span class="sr" hidden>Вопрос</span><textarea id="ask-q" placeholder="Например: стрелка температуры дёргается, что проверить?"></textarea></label>
-      <button class="btn" data-act="ask" id="ask-btn">Спросить</button>
-      <div class="answer" id="ask-out" hidden></div>
-      ${aiMode() === 'gemini' ? '<button class="link" data-act="gkey-reset" style="align-self:flex-start">Сменить ключ Google AI</button>' : ''}
-    </div>
-  </section>`}
+  ${askSectionHTML()}
   ${window.APP_VERSION ? `<p class="foot">Версия приложения ${esc(window.APP_VERSION)}</p>` : ''}`;
 }
 
@@ -1910,6 +1946,98 @@ function partsCatalogHTML(){
     <p class="note">Номера BMW подобраны по вашему VIN, аналоги — по каталогам производителей. Перед покупкой сверяйте с продавцом.</p></section>`;
 }
 
+// ---- ТО and Машина in the home-screen style ----
+let stateFilter = 'all';            // all | late | soon | ok | none | cond
+const icon = k => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k] || ICONS['t-engine']}</svg>`;
+function jobCard(x){
+  const st = x.st, cond = st.state === 'cond';
+  return `<button class="job s-${st.state}" data-item="${x.it.id}">
+    ${cond ? `<span class="ring ring-dash" style="width:46px;height:46px"><span class="ring-ic">${iconSVG(x.it.id)}</span></span>`
+      : ringMarkup(st.state === 'none' ? 0 : st.pct, st.state, 46, `<span class="ring-ic">${iconSVG(x.it.id)}</span>`)}
+    <b>${esc(x.it.name)}</b>
+    <span class="job-v">${st.state === 'none' ? 'Отметить замену' : esc(st.left)}</span>
+    <span class="job-i">${cond ? 'По состоянию' : 'Каждые ' + esc(interval(x.it))}</span></button>`;
+}
+function viewPartsBMW(){
+  const all = itemsFor(S.car).map(it => ({it, st: status(it)}));
+  const cnt = s => all.filter(x => x.st.state === s).length;
+  const bySys = partFilter === 'all' ? all : all.filter(x => x.it.sys === partFilter);
+  const shown = stateFilter === 'all' ? bySys : bySys.filter(x => x.st.state === stateFilter);
+  const groups = SYSTEMS.filter(s => shown.some(x => x.it.sys === s));
+  const tile = (k, label, cls) => `<button class="st-tile ${cls}" data-sfilter="${k}" aria-pressed="${stateFilter === k}"><b>${cnt(k)}</b><span>${label}</span></button>`;
+  return `<section class="section">
+    <div class="car-line"><div><p class="eyebrow">Регламент под ${esc(ENGINES[S.car.engine].code)}</p><h1>Работы ТО.</h1></div><button class="ghost" data-act="add-entry">Замена</button></div>
+    <div class="st-tiles">${tile('late', 'просрочено', 's-late')}${tile('soon', 'скоро', 's-soon')}${tile('ok', 'в норме', 's-ok')}${tile('none', 'нет данных', 's-none')}</div>
+    <div class="filters" role="group" aria-label="Фильтр по системам">
+      <button class="chip" data-filter="all" aria-pressed="${partFilter === 'all'}">Все</button>
+      ${SYSTEMS.filter(s => all.some(x => x.it.sys === s)).map(s => `<button class="chip" data-filter="${s}" aria-pressed="${partFilter === s}">${s}</button>`).join('')}
+    </div>
+    ${stateFilter !== 'all' ? `<button class="link" data-sfilter="all" style="align-self:flex-start">Показать все работы</button>` : ''}
+  </section>
+  ${groups.length ? groups.map(g => `<section class="section"><h2>${g}</h2><div class="jgrid">${shown.filter(x => x.it.sys === g)
+      .sort((a, b) => ORDER[a.st.state] - ORDER[b.st.state] || b.st.pct - a.st.pct).map(jobCard).join('')}</div></section>`).join('')
+    : '<div class="list"><p class="empty">Таких работ сейчас нет.</p></div>'}
+  <p class="foot">Интервалы — практические для машины старше 20 лет, чаще заводских. «По состоянию» — меняется по симптомам, отметка нужна для истории.</p>`;
+}
+
+const WEAK_ICON = {'Система охлаждения':'coolant','Задний подрамник':'t-car-lifter','Вентиляция картера (CCV)':'ccv','Течи масла':'gasket','VANOS и DISA':'vanos',
+  'Цепь, Valvetronic и сальники клапанов':'chain','Шатунные вкладыши и VANOS':'rod','Вихревые заслонки, турбина, форсунки':'swirl','Резистор печки':'t-car-fan',
+  'Стеклоподъёмники':'t-car-lifter','Пиксели на приборке':'t-engine','Проводка крышки багажника':'t-battery-automotive'};
+function partsSheet(id){
+  const it = itemsFor(S.car).find(x => x.id === id), ps = partsFor(id); if (!it || !ps) return;
+  openSheet(`<div class="sheet-head"><div><p class="eyebrow">Запчасти</p><h3>${esc(it.name)}</h3></div><button class="x" data-act="close" aria-label="Закрыть">×</button></div>
+    ${ps.map(partCard).join('')}
+    <p class="note">Подобрано по VIN в каталоге BMW. Нажмите на номер, чтобы скопировать.</p>
+    <button class="btn wide" data-item="${id}">Открыть работу →</button>`);
+}
+function viewCarBMW(){
+  const c = S.car, e = ENGINES[c.engine];
+  const gearOil = partsFor('gearbox');
+  const fluids = [
+    ['oil', 'Моторное масло', `${e.oil.replace(/ с допуском/, ',')}, ${e.oilL} л`],
+    ['coolant', 'Антифриз', 'BMW синий G48, 50/50'],
+    ['brakefluid', 'Тормозная жидкость', 'DOT 4, раз в 2 года'],
+    ['t-steering-wheel', 'ГУР', 'ATF Dexron III'],
+    [c.gearbox === 'auto' ? 't-automatic-gearbox' : 't-manual-gearbox', c.gearbox === 'auto' ? 'АКПП' : 'МКПП', gearOil ? 'BMW MTF LT-2' : 'по наклейке на коробке'],
+    ['diff', 'Редуктор', '75W-90, допуск BMW'],
+    ['t-gas-station', 'Топливо', e.octane],
+    ['chain', 'Привод ГРМ', e.timing],
+    ['tyre', 'Колёса', '5×120, DIA 72,6 · болты 120 Н·м'],
+    ['t-battery-automotive', 'Аккумулятор', 'в багажнике, справа']
+  ];
+  const partItems = c.engine === 'm43' ? itemsFor(c).filter(it => partsFor(it.id)) : [];
+  const weak = WEAK.filter(w => w.for(c));
+  const hot = ['P0171', 'P0300', 'P0128', 'P0335', 'P0505', 'P0420'];
+  return `<section class="section">
+    <div class="car-line"><div><p class="eyebrow">BMW ${esc(c.model || e.models)} · ${esc(c.engineName || e.code)}</p><h1>Машина.</h1></div><button class="ghost" data-act="edit-car">Изменить</button></div>
+    ${carArt(c)}
+    ${passportHTML()}
+  </section>
+
+  <section class="section"><h2>Жидкости и данные</h2>
+    <div class="fluids">${fluids.map(([k, n, v]) => `<div class="fluid"><span class="fl-ic">${icon(k)}</span><span><i>${esc(n)}</i><b>${esc(v)}</b></span></div>`).join('')}</div>
+    <p class="note">Объёмы приблизительные, точный тип масла коробки и редуктора — по VIN или табличке на агрегате.</p>
+  </section>
+
+  ${partItems.length ? `<section class="section"><div class="section-head"><h2>Запчасти для ТО</h2><span class="note">${partItems.reduce((s, it) => s + partsFor(it.id).length, 0)} позиций</span></div>
+    <div class="jgrid">${partItems.map(it => `<button class="job part-tile" data-parts="${it.id}">
+      <span class="ring" style="width:46px;height:46px"><span class="ring-ic">${iconSVG(it.id)}</span></span>
+      <b>${esc(it.name)}</b><span class="job-v num">${esc(partsFor(it.id)[0].oem)}</span>
+      <span class="job-i">${partsFor(it.id).length > 1 ? partsFor(it.id).length + ' позиции' : esc(partsFor(it.id)[0].am[0] || 'оригинал BMW')}</span></button>`).join('')}</div></section>` : ''}
+
+  <section class="section"><h2>Коды ошибок</h2>
+    <div class="codes-card">${codesHTML()}<div class="qs">${hot.map(k => `<button class="chip" data-code="${k}">${k}</button>`).join('')}</div></div>
+  </section>
+
+  <section class="section"><h2>Слабые места вашей версии</h2>
+    <div class="carousel">${weak.map(w => `<div class="weak"><span class="fl-ic">${icon(WEAK_ICON[w.t] || 't-engine')}</span><b>${esc(w.t)}</b><p>${esc(w.d)}</p></div>`).join('')}</div>
+  </section>
+
+  ${howToHTML()}
+  ${askSectionHTML()}
+  ${window.APP_VERSION ? `<p class="foot">Версия приложения ${esc(window.APP_VERSION)}</p>` : ''}`;
+}
+
 // ================= render =================
 function render(){
   document.querySelectorAll('nav.tabs button').forEach(b => b.setAttribute('aria-current', b.dataset.tab === tab ? 'page' : 'false'));
@@ -1918,7 +2046,7 @@ function render(){
   if (!S || editing) { $('#app').innerHTML = viewSetup(editing); mountTurns(); return; }
   const keepQ = $('#ask-q') ? $('#ask-q').value : '';
   const keepA = $('#ask-out') && !$('#ask-out').hidden ? $('#ask-out').textContent : '';
-  $('#app').innerHTML = {home:SKIN === 'bmw' ? viewHomeBMW : SKIN ? viewHomeSkin : viewHome, parts:viewParts, car:viewCar, log:viewLog}[tab]();
+  $('#app').innerHTML = {home:SKIN === 'bmw' ? viewHomeBMW : SKIN ? viewHomeSkin : viewHome, parts:SKIN === 'bmw' ? viewPartsBMW : viewParts, car:SKIN === 'bmw' ? viewCarBMW : viewCar, log:viewLog}[tab]();
   mountTurns();
   if (tab === 'home' && SKIN === 'bmw') { clusterTest(); if (STANDALONE) fillWeather(); }
   if (tab === 'car') { if ($('#ask-q')) $('#ask-q').value = keepQ; if (keepA) { $('#ask-out').hidden = false; $('#ask-out').textContent = keepA; } }
@@ -1933,6 +2061,8 @@ document.addEventListener('click', ev => {
   if (t.dataset.tab) return go(t.dataset.tab);
   if (t.dataset.goto) return go(t.dataset.goto);
   if (t.dataset.filter) { partFilter = t.dataset.filter; return render(); }
+  if (t.dataset.sfilter) { stateFilter = stateFilter === t.dataset.sfilter ? 'all' : t.dataset.sfilter; return render(); }
+  if (t.dataset.parts) return partsSheet(t.dataset.parts);
   if (t.dataset.item) return sheetItem(t.dataset.item);
   if (t.dataset.q) { $('#ask-q').value = t.dataset.q; return ask(); }
   if (t.dataset.entry) {
