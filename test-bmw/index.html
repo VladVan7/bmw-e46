@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru" data-skin="ab">
+<html lang="ru" data-skin="bmw">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -19,7 +19,7 @@
 <title>Бортжурнал E46</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600&family=Golos+Text:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600&family=Golos+Text:wght@400;500;600&family=Inter+Tight:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: one calm phone-width column. Monochrome "technical drawing" world; the only colour is the E46 cluster's red-orange glow in the odometer */
 :root{
@@ -312,6 +312,86 @@ label.cb input{width:18px;height:18px;accent-color:var(--ink);margin-top:2px;fle
 .tile .tn{font-size:13.5px;font-weight:500;line-height:1.25;min-width:0}
 .tile .tv{font:500 12.5px var(--f-mono);color:var(--muted)}
 .tile.s-late .tv{color:var(--late)} .tile.s-soon .tv{color:var(--soon)}
+
+/* ===== Skin "bmw": current BMW digital language — black stage with blue/violet light, bold headline with full stop,
+   square-cornered controls with uppercase labels and arrows, BMW blue for the one primary action, hairline status rows ===== */
+:root[data-skin="bmw"]{
+  --bg:#04060A; --surface:#0D1117; --ink:#F4F6F9; --muted:#8A94A2; --line:rgba(255,255,255,.10); --soft:rgba(255,255,255,.055);
+  --bmw-blue:#1C69D4; --bmw-blue-2:#4F8EF0; --violet:#6B4BD8;
+  --ok:#35B56A; --soon:#F2A43A; --late:#E5484D; --ok-soft:rgba(53,181,106,.14); --soon-soft:rgba(242,164,58,.14); --late-soft:rgba(229,72,77,.14);
+  --glow:#4F8EF0; --lcd:#0D1117; --lcd-dim:#2A3340; --lcd-text:#C9D3E0;
+  --act:#1C69D4; --act-ink:#FFFFFF; --chrome:#2A313B;
+  --f-display:'Inter Tight','Golos Text',system-ui,sans-serif; --f-body:'Inter Tight','Golos Text',system-ui,sans-serif; --f-mono:'Inter Tight',system-ui,sans-serif;
+  color-scheme:dark;
+}
+:root[data-skin="bmw"] body{background:
+  radial-gradient(120% 60% at 50% -10%, rgba(28,105,212,.30), transparent 60%),
+  radial-gradient(80% 50% at 100% 20%, rgba(107,75,216,.16), transparent 60%),
+  var(--bg) fixed}
+:root[data-skin="bmw"] main{gap:28px}
+:root[data-skin="bmw"] h1{font:700 40px/1 var(--f-display);letter-spacing:-.025em}
+:root[data-skin="bmw"] h2{font:600 12px/1.3 var(--f-body);letter-spacing:.14em;color:var(--muted)}
+:root[data-skin="bmw"] .eyebrow{font:500 12px var(--f-body);letter-spacing:.14em}
+:root[data-skin="bmw"] .meta{font:300 15px var(--f-body);letter-spacing:0;color:var(--muted)}
+:root[data-skin="bmw"] .num{font-family:var(--f-body)}
+:root[data-skin="bmw"] .btn{background:var(--bmw-blue);color:#fff;border-radius:3px;font:600 12.5px var(--f-body);letter-spacing:.1em;text-transform:uppercase;padding:14px 18px}
+:root[data-skin="bmw"] .btn:hover{background:#2A77E3;opacity:1}
+:root[data-skin="bmw"] .btn.quiet,:root[data-skin="bmw"] .ghost{background:transparent;color:var(--ink);border:1px solid rgba(255,255,255,.55);border-radius:3px;font:600 11.5px var(--f-body);letter-spacing:.1em;text-transform:uppercase;padding:10px 14px}
+:root[data-skin="bmw"] .ghost:hover,:root[data-skin="bmw"] .btn.quiet:hover{border-color:#fff}
+:root[data-skin="bmw"] .link{border-bottom:0;font:600 11.5px var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
+:root[data-skin="bmw"] .link::after{content:" →"}
+:root[data-skin="bmw"] .chip{border-radius:3px;border-color:var(--line)}
+:root[data-skin="bmw"] .chip[aria-pressed="true"]{background:#fff;color:#000;border-color:#fff}
+:root[data-skin="bmw"] .list,:root[data-skin="bmw"] .shop,:root[data-skin="bmw"] .specs,:root[data-skin="bmw"] details.card,:root[data-skin="bmw"] .ask,:root[data-skin="bmw"] .vinbox,:root[data-skin="bmw"] .stats,:root[data-skin="bmw"] .stat{border-radius:4px;background:rgba(255,255,255,.035);border:1px solid var(--line)}
+:root[data-skin="bmw"] .stats{background:var(--line)}
+:root[data-skin="bmw"] .stat{border:0;background:#0A0E14}
+:root[data-skin="bmw"] .spec{border-color:var(--line)}
+:root[data-skin="bmw"] .row{border-color:var(--line)}
+:root[data-skin="bmw"] .bar{height:2px;background:rgba(255,255,255,.08)}
+:root[data-skin="bmw"] .s-ok .bar i{background:var(--bmw-blue-2)}
+:root[data-skin="bmw"] .s-ok .left{color:var(--ink)}
+:root[data-skin="bmw"] .grp{background:transparent;border-color:var(--line)}
+:root[data-skin="bmw"] label.f input,:root[data-skin="bmw"] label.f select,:root[data-skin="bmw"] label.f textarea,:root[data-skin="bmw"] .ask textarea{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:3px}
+:root[data-skin="bmw"] #sheet .in{background:#0C1016;border-top:1px solid var(--line);border-radius:6px 6px 0 0}
+:root[data-skin="bmw"] .status-box{border-radius:4px}
+:root[data-skin="bmw"] .tip{border-left-color:var(--bmw-blue)}
+:root[data-skin="bmw"] .banner,:root[data-skin="bmw"] .demo{border-radius:4px;border-color:rgba(255,255,255,.25)}
+:root[data-skin="bmw"] nav.tabs{bottom:0;padding:0}
+:root[data-skin="bmw"] nav.tabs .in{max-width:none;border-radius:0;border:0;border-top:1px solid var(--line);background:rgba(4,6,10,.86);padding:6px 8px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:none;justify-content:center}
+:root[data-skin="bmw"] nav.tabs button{max-width:110px;border-radius:0;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase}
+:root[data-skin="bmw"] nav.tabs button[aria-current="page"]{background:transparent;color:#fff;box-shadow:inset 0 2px 0 var(--bmw-blue)}
+:root[data-skin="bmw"] .turn-ctl button{border-radius:3px;border-color:rgba(255,255,255,.3)}
+:root[data-skin="bmw"] .turn-dots i.on{background:var(--bmw-blue-2)}
+:root[data-skin="bmw"] .art::before{background:linear-gradient(90deg,transparent,rgba(79,142,240,.55) 30%,rgba(79,142,240,.55) 70%,transparent)}
+:root[data-skin="bmw"] .art::after{content:"";position:absolute;left:10%;right:10%;top:calc((100% - 46px) * .9636 - 18px);height:36px;background:radial-gradient(50% 50% at 50% 50%,rgba(28,105,212,.35),transparent 70%);pointer-events:none}
+:root[data-skin="bmw"] .turn-img.on{opacity:1}
+
+/* status + vehicle data (home) */
+.vs{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border:1px solid var(--line);border-radius:4px;background:rgba(255,255,255,.035)}
+.vs svg{width:26px;height:26px;flex:none;margin-top:2px}
+.vs b{display:block;font:700 19px/1.2 var(--f-display);letter-spacing:-.01em}
+.vs span{font-size:14px;color:var(--muted)}
+.odo2{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:2px 2px 0}
+.odo2 .k{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.odo2 .v{font:300 44px/1 var(--f-display);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.odo2 .v small{font-size:16px;color:var(--muted);margin-left:6px;letter-spacing:0}
+.cbs{border-top:1px solid var(--line)}
+.cbs-row{display:grid;grid-template-columns:42px 1fr auto;gap:2px 14px;align-items:center;width:100%;padding:16px 2px;background:none;border:0;border-bottom:1px solid var(--line);color:inherit;text-align:left}
+.cbs-row:hover{background:rgba(255,255,255,.03)}
+.cbs-ic{grid-row:1 / span 2;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center}
+.cbs-ic svg{width:22px;height:22px;fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.cbs-row.s-late .cbs-ic{border-color:var(--late)} .cbs-row.s-late .cbs-ic svg{stroke:var(--late)}
+.cbs-row.s-soon .cbs-ic{border-color:var(--soon)} .cbs-row.s-soon .cbs-ic svg{stroke:var(--soon)}
+.cbs-n{font:600 15.5px var(--f-body);min-width:0}
+.cbs-v{font:500 14px var(--f-body);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.cbs-row.s-late .cbs-v{color:var(--late)} .cbs-row.s-soon .cbs-v{color:var(--soon)}
+.cbs-s{grid-column:2 / -1;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:10px}
+.cbs-s i{flex:1;height:2px;background:rgba(255,255,255,.08);position:relative;max-width:120px}
+.cbs-s i b{position:absolute;inset:0 auto 0 0;background:var(--bmw-blue-2)}
+.cbs-row.s-late .cbs-s i b{background:var(--late)} .cbs-row.s-soon .cbs-s i b{background:var(--soon)}
+.cta-row{display:grid;grid-template-columns:1fr auto;gap:10px}
+.list .cbs-row{padding-inline:14px}
+.list .cbs-row:last-child{border-bottom:0}
 </style>
 
 <main id="app"><p class="loading">Открываю бортжурнал…</p></main>
@@ -635,6 +715,7 @@ const ORDER = {late:0, soon:1, none:2, ok:3, cond:4};
 
 function row(it){
   const st = status(it);
+  if (SKIN === 'bmw') return cbsRow({it, st});
   const bar = st.state === 'none' || st.state === 'cond' ? '' : `<div class="bar"><i style="width:${Math.max(4, st.pct*100).toFixed(0)}%"></i></div>`;
   return `<button class="row s-${st.state}" data-item="${it.id}">
     <span class="dot"></span><span class="name">${esc(it.name)}</span><span class="left">${esc(st.left)}</span>
@@ -856,7 +937,7 @@ function viewHomeSkin(){
   const urgentList = `<section class="section"><h2>Пора менять</h2>
     ${urgent.length ? `<div class="list">${urgent.map(x => row(x.it)).join('')}</div>` : `<div class="list"><p class="empty">${n('ok') ? 'Срочного ничего нет.' : 'Пока нет данных о заменах.'}</p></div>`}</section>`;
   const shopList = shop.length ? `<section class="section"><h2>Ближайшее ТО: что купить</h2>
-    <div class="shop"><ul>${shop.map(x => `<li><b>${esc(x.it.name)}</b> — ${esc(firstSentence(x.it.buy))}</li>`).join('')}</ul></div></section>` : '';
+    <div class="shop"><ul>${shop.map(x => `<li><span><b>${esc(x.it.name)}</b> — ${esc(firstSentence(x.it.buy))}</span></li>`).join('')}</ul></div></section>` : '';
   if (SKIN === 'ab') {
     const bad = n('late') + n('soon');
     const works = k => `${k} ${plural(k, 'работа', 'работы', 'работ')}`;
@@ -872,6 +953,71 @@ function viewHomeSkin(){
     ${urgentList}${shopList}
     <section class="section"><div class="section-head"><h2>Дальше по плану</h2><button class="link" data-goto="parts">Все работы</button></div>
     <div class="list">${items.filter(x => x.st.state === 'ok').sort((a,b) => b.st.pct - a.st.pct).slice(0,5).map(x => row(x.it)).join('') || '<p class="empty">Здесь появятся работы, когда вы отметите замены.</p>'}</div></section>`;
+}
+
+// ---- skin "bmw": My BMW–style home (status card + service rows with line icons) ----
+const ICONS = {
+  oil: 'M3 15.5h11.5l4.5-4 2.5 1.2-5.5 5.8H5a2 2 0 0 1-2-2zM7.5 15.5v-3h5v3M10 12.5V10M8 10h4M20.5 15.5c0 .9.4 1.6.9 2.2',
+  filter: 'M5 6h14v12H5zM8 6v12M11 6v12M14 6v12M17 6v12',
+  plug: 'M12 2.5v3M10 5.5h4v3h-4zM9 8.5h6v5H9zM12 13.5v4l-2 3.5',
+  belt: 'M7 6.5a3 3 0 1 0 0 6a3 3 0 1 0 0-6zM17 11.5a3 3 0 1 0 0 6a3 3 0 1 0 0-6zM7.6 6.6l9.8 4.9M6.4 12.4l9.8 4.9',
+  drop: 'M12 3.5c3 4 5 6.6 5 9.5a5 5 0 0 1-10 0c0-2.9 2-5.5 5-9.5z',
+  thermo: 'M12 3.5a2 2 0 0 1 2 2v8.6a3.6 3.6 0 1 1-4 0V5.5a2 2 0 0 1 2-2zM12 10v6.5M16.5 6h2.5M16.5 9h2',
+  gear: 'M12 8.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 1 0 0-7zM12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8',
+  disc: 'M12 4a8 8 0 1 0 0 16a8 8 0 1 0 0-16zM12 9.5a2.5 2.5 0 1 0 0 5a2.5 2.5 0 1 0 0-5zM17.2 5.2c1.9 1.5 3 3.9 2.8 6.4',
+  spring: 'M7 3.5h10M7 20.5h10M9 6l6 1.8-6 1.8 6 1.8-6 1.8 6 1.8-6 1.8',
+  search: 'M10.5 4a6.5 6.5 0 1 0 0 13a6.5 6.5 0 1 0 0-13zM15.5 15.5L20 20',
+  battery: 'M3.5 8h17v10h-17zM7.5 8V6h2.5v2M14 8V6h2.5v2M6.5 13h3.5M8.25 11.25v3.5M14 13h3.5',
+  snow: 'M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.5 4.5L12 6.5l2.5-2M9.5 19.5L12 17.5l2.5 2',
+  wiper: 'M4 19L17 6M15.5 4.5l3 3M6.5 20.5C9 14.5 14 9.5 20.5 7',
+  tyre: 'M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18zM12 8a4 4 0 1 0 0 8a4 4 0 1 0 0-8zM12 3v5M12 16v5M3 12h5M16 12h5',
+  wrench: 'M14.5 4.5a4.5 4.5 0 0 0-5.7 5.8L4 15.1V20h4.9l4.8-4.8a4.5 4.5 0 0 0 5.8-5.7l-2.8 2.8-2.6-.6-.6-2.6z'
+};
+const ICON_OF = {oil:'oil', air:'filter', cabin:'filter', fuel:'filter', plugs:'plug', coils:'plug', glow:'plug', belts:'belt',
+  brakefluid:'drop', psf:'drop', coolant:'thermo', pump:'thermo', tank:'thermo', gearbox:'gear', diff:'gear', transfer:'gear',
+  padsF:'disc', padsR:'disc', discsF:'disc', discsR:'disc', bushF:'spring', rtab:'spring', subframe:'search', battery:'battery',
+  ac:'snow', wipers:'wiper', tires:'tyre'};
+const iconSVG = id => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ICONS[ICON_OF[id] || 'wrench']}"/></svg>`;
+function cbsRow(x){
+  const pct = Math.round(Math.min(x.st.pct, 1) * 100);
+  return `<button class="cbs-row s-${x.st.state}" data-item="${x.it.id}">
+    <span class="cbs-ic">${iconSVG(x.it.id)}</span>
+    <span class="cbs-n">${esc(x.it.name)}</span><span class="cbs-v">${esc(x.st.left)}</span>
+    <span class="cbs-s">${x.it.cond ? esc(x.st.sub) : `Каждые ${esc(interval(x.it))}<i><b style="width:${pct}%"></b></i>`}</span></button>`;
+}
+function viewHomeBMW(){
+  const c = S.car, e = ENGINES[c.engine];
+  const items = itemsFor(c).map(it => ({it, st:status(it)}));
+  const n = s => items.filter(x => x.st.state === s).length;
+  const tracked = items.filter(x => x.st.state !== 'cond' && x.st.state !== 'none').sort((a,b) => ORDER[a.st.state] - ORDER[b.st.state] || b.st.pct - a.st.pct);
+  const works = k => `${k} ${plural(k, 'работа', 'работы', 'работ')}`;
+  const vs = !tracked.length ? {k:'info', t:'Нет данных о сервисе.', s:'Отметьте последние замены, и здесь появится состояние автомобиля.'}
+    : n('late') ? {k:'late', t:'Требуется сервис.', s:`Просрочено: ${works(n('late'))}${n('soon') ? `, скоро: ${works(n('soon'))}` : ''}.`}
+    : n('soon') ? {k:'soon', t:'Скоро сервис.', s:`Подходит срок: ${works(n('soon'))}.`}
+    : {k:'ok', t:'Всё в порядке.', s:`Ближайшая работа: ${tracked[0].it.name.toLowerCase()}, ${tracked[0].st.left}.`};
+  const vsIcon = vs.k === 'ok'
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="1.6"><circle cx="12" cy="12" r="9.5"/><path d="M7.5 12.3l3 3 6-6.3"/></svg>'
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="${vs.k === 'late' ? 'var(--late)' : vs.k === 'soon' ? 'var(--soon)' : 'var(--muted)'}" stroke-width="1.6"><circle cx="12" cy="12" r="9.5"/><path d="M12 7v6.5M12 16.6v.4"/></svg>`;
+  const demo = DEMO ? `<div class="demo"><span><b>Пример данных</b> для теста дизайна. Ваш журнал не меняется.</span><button class="btn quiet" data-act="exit-demo">Мои данные</button></div>`
+    : (Object.keys(S.rec || {}).length < 3 ? `<div class="demo"><span>Замен в журнале пока мало.</span><button class="btn quiet" data-act="enter-demo">Показать пример</button></div>` : '');
+  const shop = nextService(items);
+  return `<section class="hero">
+    <div class="car-line"><div><p class="eyebrow">Мой BMW</p><h1>BMW ${esc(c.model || e.models)}.</h1>
+      <p class="meta">E46 · ${esc(BODIES[c.body])} · ${esc(c.year)} · ${esc(c.engineName || e.code)}${c.hp ? ' · ' + c.hp + ' л.с.' : ''}</p></div>
+      <button class="ghost" data-act="edit-car">Изменить</button></div>
+    ${demo}
+    ${carArt(c)}
+    <div class="odo2"><div><div class="k">Пробег</div><div class="v">${fmtKm(S.mileage)}<small>км</small></div></div>
+      <button class="btn quiet" data-act="mileage">Обновить →</button></div>
+    <div class="vs">${vsIcon}<div><b>${vs.t}</b><span>${esc(vs.s)}</span></div></div>
+    ${saveErr ? `<p class="err">${esc(saveErr)}</p>` : ''}
+  </section>
+  <section class="section"><div class="section-head"><h2>Сервис</h2><button class="link" data-goto="parts">Все работы</button></div>
+    ${tracked.length ? `<div class="cbs">${tracked.slice(0, 6).map(cbsRow).join('')}</div>` : '<div class="list"><p class="empty">Здесь появятся работы, когда вы отметите замены.</p></div>'}
+    <button class="btn wide" data-act="add-entry">Записать замену →</button>
+  </section>
+  ${shop.length ? `<section class="section"><h2>Ближайшее ТО</h2>
+    <div class="shop"><ul>${shop.map(x => `<li><span><b>${esc(x.it.name)}</b> — ${esc(firstSentence(x.it.buy))}</span></li>`).join('')}</ul></div></section>` : ''}`;
 }
 
 function viewHome(){
@@ -915,7 +1061,7 @@ function viewHome(){
   </section>
   ${shop.length ? `<section class="section"><h2>Ближайшее ТО: что купить</h2>
     <div class="shop"><p class="note">Всё, что подойдёт в ближайшие 3 000 км или 3 месяца. Удобно сделать за один заезд.</p>
-    <ul>${shop.map(x => `<li><b>${esc(x.it.name)}</b> — ${esc(firstSentence(x.it.buy))}</li>`).join('')}</ul></div></section>` : ''}
+    <ul>${shop.map(x => `<li><span><b>${esc(x.it.name)}</b> — ${esc(firstSentence(x.it.buy))}</span></li>`).join('')}</ul></div></section>` : ''}
   <section class="section">
     <div class="section-head"><h2>Дальше по плану</h2><button class="link" data-goto="parts">Все работы</button></div>
     <div class="list">${items.filter(x => x.st.state === 'ok').sort((a,b) => b.st.pct - a.st.pct).slice(0,5).map(x => row(x.it)).join('') || '<p class="empty">Здесь появятся работы, когда вы отметите замены.</p>'}</div>
@@ -1124,7 +1270,7 @@ function render(){
   if (!S || editing) { $('#app').innerHTML = viewSetup(editing); mountTurns(); return; }
   const keepQ = $('#ask-q') ? $('#ask-q').value : '';
   const keepA = $('#ask-out') && !$('#ask-out').hidden ? $('#ask-out').textContent : '';
-  $('#app').innerHTML = {home:SKIN ? viewHomeSkin : viewHome, parts:viewParts, car:viewCar, log:viewLog}[tab]();
+  $('#app').innerHTML = {home:SKIN === 'bmw' ? viewHomeBMW : SKIN ? viewHomeSkin : viewHome, parts:viewParts, car:viewCar, log:viewLog}[tab]();
   mountTurns();
   if (tab === 'car') { if ($('#ask-q')) $('#ask-q').value = keepQ; if (keepA) { $('#ask-out').hidden = false; $('#ask-out').textContent = keepA; } }
 }
