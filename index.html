@@ -19,7 +19,7 @@
 <title>Бортжурнал E46</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600&family=Golos+Text:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: one calm phone-width column. Monochrome "technical drawing" world; the only colour is the E46 cluster's red-orange glow in the odometer */
 :root{
@@ -239,6 +239,79 @@ label.cb input{width:18px;height:18px;accent-color:var(--ink);margin-top:2px;fle
 .vin-card{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--soft);padding-top:12px}
 .vin-card b{font:500 17px var(--f-body)}
 @media (max-width:420px){h1{font-size:44px}.lcd .digits{font-size:28px}.fields{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.stat b{font-size:15px}.dim{font-size:9.5px}}
+
+/* ===== Test skins (set by <html data-skin>): "a" = E46 cockpit, "ab" = My BMW layout with the E46 cockpit on top. Both dark by design. ===== */
+:root[data-skin="a"]{
+  --bg:#0A0A0B; --surface:#141416; --ink:#EFE2DA; --muted:#8F7F77; --line:#2B2B2F; --soft:#1C1C1F;
+  --glow:#FF5B1F; --lcd:#050506; --lcd-dim:#33190F; --lcd-text:#C9B7AE;
+  --ok:#3BC46C; --soon:#F2A63A; --late:#FF4B3A; --ok-soft:#10261A; --soon-soft:#2E220E; --late-soft:#341512;
+  --chrome:#3A3A40; --act:#FF5B1F; --act-ink:#160A05;
+  --f-display:'Golos Text','Onest',system-ui,sans-serif; --f-body:'Golos Text','Onest',system-ui,sans-serif;
+  color-scheme:dark;
+}
+:root[data-skin="ab"]{
+  --bg:#0F1113; --surface:#1A1D21; --ink:#F1F3F5; --muted:#8E959E; --line:#2A2F35; --soft:#22262B;
+  --glow:#FF5B1F; --lcd:#060708; --lcd-dim:#33190F; --lcd-text:#C9B7AE;
+  --ok:#4CC27E; --soon:#F0A63A; --late:#F0574B; --ok-soft:#13281C; --soon-soft:#2D230F; --late-soft:#331816;
+  --chrome:#343A41; --act:#1C69D4; --act-ink:#FFFFFF;
+  --f-display:'Golos Text','Onest',system-ui,sans-serif; --f-body:'Golos Text','Onest',system-ui,sans-serif;
+  color-scheme:dark;
+}
+:root[data-skin] .btn{background:var(--act);color:var(--act-ink);border-radius:8px;font-weight:500;letter-spacing:.01em}
+:root[data-skin] .btn.quiet{background:transparent;color:var(--ink);border:1px solid var(--line)}
+:root[data-skin] h1{font-weight:300;letter-spacing:-.02em}
+:root[data-skin] h2{letter-spacing:.18em}
+:root[data-skin] .list,:root[data-skin] .shop,:root[data-skin] .specs,:root[data-skin] details.card,:root[data-skin] .ask,:root[data-skin] .vinbox{border-radius:12px}
+:root[data-skin] nav.tabs .in{background:color-mix(in srgb,var(--surface) 88%,transparent);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+:root[data-skin="a"] nav.tabs button[aria-current="page"]{color:var(--glow);background:transparent}
+:root[data-skin="a"] .row .left,:root[data-skin="a"] .s-ok .left{color:var(--ink)}
+:root[data-skin="a"] .dot{box-shadow:0 0 6px currentColor}
+:root[data-skin="a"] .s-late .dot{color:var(--late)} :root[data-skin="a"] .s-soon .dot{color:var(--soon)} :root[data-skin="a"] .s-ok .dot{color:var(--ok)}
+:root[data-skin="a"] .ghost{border-color:var(--chrome)}
+:root[data-skin="ab"] .ghost{border-radius:8px}
+
+/* demo-data note on test pages */
+.demo{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px dashed var(--muted);border-radius:10px;padding:9px 12px;font-size:13px;color:var(--muted)}
+.demo b{color:var(--ink);font-weight:500}
+
+/* cockpit: E46-style dial, mini gauges, service-interval LEDs */
+.cockpit{background:var(--lcd);border-radius:20px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:10px;color:var(--lcd-text);border:1px solid #1d1d20;box-shadow:inset 0 0 0 1px rgba(255,255,255,.03)}
+.dial{display:block;width:100%;max-width:340px;margin:0 auto;overflow:visible}
+.dial .tk{stroke:var(--glow);stroke-linecap:round}
+.dial .tk.red{stroke:#FF2A1A}
+.dial .num{fill:var(--glow);font:500 11px var(--f-mono);opacity:.85}
+.dial .name{fill:var(--lcd-text);font:500 10px var(--f-mono);letter-spacing:.16em;text-transform:uppercase;opacity:.75}
+.dial .val{fill:var(--glow);font:500 21px var(--f-mono);letter-spacing:.01em}
+.dial .needle{stroke:#FF7A3D;stroke-width:3;stroke-linecap:round;filter:drop-shadow(0 0 4px rgba(255,106,46,.7))}
+.dial .hub{fill:#18181b;stroke:var(--chrome);stroke-width:1.5}
+.dial .ring{fill:none;stroke:var(--chrome);stroke-width:2}
+.sia{display:flex;justify-content:center;gap:6px;align-items:center;flex-wrap:wrap;margin-top:2px}
+.sia i{width:9px;height:9px;border-radius:50%;background:#1d1d20;box-shadow:inset 0 0 0 1px #2a2a2e}
+.sia i.g.on{background:#3BC46C;box-shadow:0 0 8px #3BC46C}
+.sia i.y.on{background:#F2A63A;box-shadow:0 0 8px #F2A63A}
+.sia i.r.on{background:#FF3B2A;box-shadow:0 0 8px #FF3B2A}
+.sia span{font:500 10px var(--f-mono);letter-spacing:.16em;color:var(--lcd-text);opacity:.6;margin-left:6px;text-transform:uppercase}
+.minis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.mini{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;text-align:center;background:none;border:0;color:inherit;padding:0}
+.mini svg{width:100%;max-width:96px}
+.mini b{font:500 12px var(--f-mono);color:var(--glow);white-space:nowrap}
+.mini span{font-size:10.5px;color:var(--lcd-text);opacity:.7;line-height:1.2;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cockpit .lcd{padding:12px 16px;border-radius:12px;background:#0B0B0D;box-shadow:inset 0 0 0 1px #1f1f22}
+.cockpit .lcd .digits{font-size:28px}
+:root[data-skin="ab"] .cockpit{background:var(--surface);border-color:var(--line);border-radius:14px}
+:root[data-skin="ab"] .cockpit .dial{max-width:250px}
+:root[data-skin="ab"] .turn-ctl{margin-top:0}
+
+/* "My BMW" service tiles (skin ab) */
+.status-line{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:12px;padding:12px 14px;font-size:14px}
+.status-line svg{width:20px;height:20px;flex:none}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.tile{background:var(--surface);border:0;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;text-align:left;color:inherit;min-width:0}
+.tile:hover{background:var(--soft)}
+.tile svg{width:34px;height:34px}
+.tile .tn{font-size:13.5px;font-weight:500;line-height:1.25;min-width:0}
+.tile .tv{font:500 12.5px var(--f-mono);color:var(--muted)}
+.tile.s-late .tv{color:var(--late)} .tile.s-soon .tv{color:var(--soon)}
 </style>
 
 <main id="app"><p class="loading">Открываю бортжурнал…</p></main>
@@ -482,6 +555,7 @@ function saveLocal(){ try { localStorage.setItem(LKEY, JSON.stringify(S)); } cat
 
 let writing = false, again = false, saveErr = '';
 async function save(){
+  if (DEMO) return;                       // example data on the design test pages is never stored
   S.updated = new Date().toISOString();
   saveLocal();
   if (!docRef) return;
@@ -508,6 +582,8 @@ const parse = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y
 const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const fmtDate = s => parse(s).toLocaleDateString('ru-RU', {day:'2-digit', month:'2-digit', year:'numeric'});
 const fmtMonth = d => d.toLocaleDateString('ru-RU', {month:'long', year:'numeric'}).replace(' г.', '');
+// genitive month for "до …" / "не позже …": «октября 2026»
+const fmtMonthGen = d => d.toLocaleDateString('ru-RU', {day:'numeric', month:'long', year:'numeric'}).replace(/^\d+\s/, '').replace(' г.', '');
 const today = new Date(); today.setHours(0,0,0,0);
 const addMonths = (d, n) => { const r = new Date(d); r.setMonth(r.getMonth() + n); return r; };
 const plural = (n, a, b, c) => { n = Math.abs(n) % 100; const n1 = n % 10; return n > 10 && n < 20 ? c : n1 > 1 && n1 < 5 ? b : n1 === 1 ? a : c; };
@@ -549,10 +625,10 @@ function status(it){
     const r = kmRate();
     if (r) { eta = addMonths(today, (it.km - usedKm) / r); if (due && eta > due) eta = due; }
   } else {
-    left = `до ${fmtMonth(due)}`;
+    left = `до ${fmtMonthGen(due)}`;
   }
   const sub = `Меняли ${fmtDate(rec.d)}` + (it.km ? ` на ${fmtKm(rec.km)} км` : '') +
-    (eta && state !== 'late' ? ` · примерно ${fmtMonth(eta)}` : (it.km && due && state !== 'late' ? ` · не позже ${fmtMonth(due)}` : ''));
+    (eta && state !== 'late' ? ` · примерно ${fmtMonth(eta)}` : (it.km && due && state !== 'late' ? ` · не позже ${fmtMonthGen(due)}` : ''));
   return {state, pct:Math.min(pct,1), left, sub, eta, due};
 }
 const ORDER = {late:0, soon:1, none:2, ok:3, cond:4};
@@ -677,6 +753,127 @@ function applyVin(v){
 }
 
 let editing = false;
+// ================= test skins (cockpit / My BMW) =================
+const SKIN = document.documentElement.dataset.skin || '';
+let DEMO = false, realS = null;
+// Example service history so the gauges have something to show on an empty journal (never saved).
+const DEMO_REC = {oil:{km:348300,d:'2026-06-02'}, air:{km:345000,d:'2025-09-20'}, cabin:{km:348300,d:'2026-06-02'}, plugs:{km:330000,d:'2024-09-01'},
+  brakefluid:{km:332000,d:'2025-03-15'}, coolant:{km:330000,d:'2024-04-01'}, pump:{km:300000,d:'2022-08-10'}, tank:{km:300000,d:'2022-08-10'},
+  belts:{km:318000,d:'2023-10-01'}, padsF:{km:338000,d:'2025-07-01'}, padsR:{km:325000,d:'2024-09-01'}, battery:{km:310000,d:'2022-11-01'},
+  wipers:{km:340000,d:'2025-11-01'}, tires:{km:352000,d:'2026-04-15'}, gearbox:{km:300000,d:'2022-08-10'}, diff:{km:300000,d:'2022-08-10'},
+  psf:{km:300000,d:'2022-08-10'}, subframe:{km:345000,d:'2025-10-20'}, ac:{km:344000,d:'2025-08-10'}};
+function enterDemo(){
+  realS = S;
+  const base = S || {car:{engine:'m43', model:'316i', engineName:'M43TUB19', hp:105, gearbox:'manual', body:'sedan', year:2000, severe:true}, mileage:355000, log:[]};
+  S = JSON.parse(JSON.stringify(base));
+  S.rec = Object.assign({}, DEMO_REC, base.rec || {});
+  S.odo = [{d:'2026-07-10', km:Math.max(0, S.mileage - 4200)}, {d:iso(today), km:S.mileage}];
+  DEMO = true;
+}
+function exitDemo(){ S = realS; DEMO = false; render(); }
+
+const polar = (cx, cy, r, deg) => [cx + r * Math.cos(deg * Math.PI / 180), cy - r * Math.sin(deg * Math.PI / 180)];
+function arcPath(cx, cy, r, d0, d1){
+  const [x0, y0] = polar(cx, cy, r, d0), [x1, y1] = polar(cx, cy, r, d1);
+  const large = Math.abs(d0 - d1) > 180 ? 1 : 0;
+  return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 ${large} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+}
+// Big dial: 240° sweep like the E46 rev counter, red zone from 85 % of the interval
+function dialSVG(t, name, value){
+  const cx = 150, cy = 150, R = 118, ang = v => 210 - 240 * v;
+  let ticks = '';
+  for (let i = 0; i <= 40; i++) {
+    const v = i / 40, major = i % 4 === 0, r1 = major ? R - 14 : R - 7;
+    const [x0, y0] = polar(cx, cy, R, ang(v)), [x1, y1] = polar(cx, cy, r1, ang(v));
+    ticks += `<line class="tk${v >= 0.85 ? ' red' : ''}" x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke-width="${major ? 2.4 : 1.2}"/>`;
+  }
+  let nums = '';
+  for (const v of [0, .25, .5, .75, 1]) { const [x, y] = polar(cx, cy, R - 30, ang(v)); nums += `<text class="num" x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="middle">${Math.round(v * 100)}</text>`; }
+  const [nx, ny] = polar(cx, cy, R - 20, ang(Math.min(Math.max(t, 0), 1.04)));
+  return `<svg class="dial" viewBox="0 0 300 222" role="img" aria-label="${esc(name)}: ${esc(value)}">
+    <path class="ring" d="${arcPath(cx, cy, R + 6, 212, -32)}"/>${ticks}${nums}
+    <text class="name" x="150" y="96" text-anchor="middle">${esc(name)}</text>
+    <text class="val" x="150" y="124" text-anchor="middle">${esc(value)}</text>
+    <line class="needle" x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}"/>
+    <circle class="hub" cx="${cx}" cy="${cy}" r="9"/>
+    <text class="name" x="150" y="206" text-anchor="middle" style="font-size:9px">% ресурса</text></svg>`;
+}
+function miniSVG(t, state){
+  const col = state === 'late' ? 'var(--late)' : state === 'soon' ? 'var(--soon)' : 'var(--glow)';
+  const v = Math.min(Math.max(t, 0), 1), d = 180 - 180 * v;
+  const [nx, ny] = polar(50, 56, 30, d);
+  return `<svg viewBox="0 0 100 64" aria-hidden="true">
+    <path d="${arcPath(50, 56, 40, 180, 0)}" fill="none" stroke="#232326" stroke-width="5" stroke-linecap="round"/>
+    ${v > 0.01 ? `<path d="${arcPath(50, 56, 40, 180, d)}" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round"/>` : ''}
+    <line x1="50" y1="56" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke="#FF7A3D" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="50" cy="56" r="4" fill="#18181b" stroke="var(--chrome)"/></svg>`;
+}
+// E46 service interval indicator: five green LEDs go out as the interval is used, then yellow, then red
+function siaHTML(top){
+  const st = top ? top.st.state : 'none', pct = top ? top.st.pct : 0;
+  const greens = st === 'ok' ? Math.max(1, Math.ceil(5 * (1 - pct / 0.85))) : 0;
+  const label = st === 'late' ? 'Сервис просрочен' : st === 'soon' ? 'Скоро сервис' : st === 'ok' ? 'Сервис в норме' : 'Нет данных';
+  return `<div class="sia" aria-label="${label}">${[0,1,2,3,4].map(k => `<i class="g${k < greens ? ' on' : ''}"></i>`).join('')}<i class="y${st === 'soon' ? ' on' : ''}"></i><i class="r${st === 'late' ? ' on' : ''}"></i><span>${label}</span></div>`;
+}
+function cockpitHTML(items, opts){
+  const tracked = items.filter(x => x.st.state !== 'cond' && x.st.state !== 'none').sort((a, b) => b.st.pct - a.st.pct);
+  // the big dial is an odometer-driven gauge: the most used-up item that has a km interval; minis show the next most urgent
+  const top = tracked.find(x => x.it.km) || tracked[0];
+  const rest = tracked.filter(x => x !== top);
+  const digits = String(Math.round(S.mileage)).padStart(6, '0'), lead = digits.match(/^0*/)[0].length;
+  const short = x => x.st.state === 'late' && !/км/.test(x.st.left) ? 'срок вышел'
+    : /^до /.test(x.st.left) && x.st.due ? x.st.due.toLocaleDateString('ru-RU', {month:'short', year:'numeric'}).replace(' г.', '')
+    : x.st.left.replace(/^через /, '').replace(/^просрочено на /, '−');
+  return `<div class="cockpit">
+    ${dialSVG(top ? top.st.pct : 0, top ? top.it.name.replace(/ и фильтр$/, '').slice(0, 28) : 'Отметьте замены', top ? short(top) : '—')}
+    ${siaHTML(top)}
+    ${opts.minis && rest.length ? `<div class="minis">${rest.slice(0, 3).map(x => `<button class="mini" data-item="${x.it.id}">${miniSVG(x.st.pct, x.st.state)}<b>${esc(short(x))}</b><span>${esc(x.it.name)}</span></button>`).join('')}</div>` : ''}
+    <button class="lcd" data-act="mileage" aria-label="Обновить пробег">
+      <span class="lbl">ODO</span>
+      <span class="digits"><span class="lead">${digits.slice(0, lead)}</span>${digits.slice(lead)}</span><span class="unit">km</span>
+      <span class="hint">обновить →</span></button>
+  </div>`;
+}
+function ringSVG(t, state){
+  const col = state === 'late' ? 'var(--late)' : state === 'soon' ? 'var(--soon)' : 'var(--act)';
+  const c = 2 * Math.PI * 15, v = Math.min(Math.max(t, 0), 1);
+  return `<svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="none" stroke="var(--soft)" stroke-width="3.2"/>
+    <circle cx="18" cy="18" r="15" fill="none" stroke="${col}" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="${(c * v).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 18 18)"/></svg>`;
+}
+function viewHomeSkin(){
+  const c = S.car, e = ENGINES[c.engine];
+  const items = itemsFor(c).map(it => ({it, st:status(it)}));
+  const n = s => items.filter(x => x.st.state === s).length;
+  const urgent = items.filter(x => x.st.state === 'late' || x.st.state === 'soon').sort((a,b) => ORDER[a.st.state]-ORDER[b.st.state] || b.st.pct-a.st.pct);
+  const tracked = items.filter(x => x.st.state !== 'cond' && x.st.state !== 'none').sort((a, b) => b.st.pct - a.st.pct);
+  const shop = nextService(items);
+  const head = `<div class="car-line"><div><p class="eyebrow">BMW E46 · ${esc(BODIES[c.body])} · ${esc(c.year)}</p>
+      <h1>${esc(c.model || e.models)}</h1>
+      <p class="meta">${esc(c.engineName || e.code)}${c.hp ? ' · ' + c.hp + ' л.с.' : ''} · ${GEARBOX[c.gearbox]}${c.xdrive ? ' · xDrive' : ''}</p></div>
+      <button class="ghost" data-act="edit-car">Изменить</button></div>`;
+  const demo = DEMO ? `<div class="demo"><span><b>Пример данных</b> для теста дизайна. Ваш журнал не меняется.</span><button class="btn quiet" data-act="exit-demo">Мои данные</button></div>`
+    : (SKIN && !DEMO && Object.keys(S.rec || {}).length < 3 ? `<div class="demo"><span>Замен в журнале пока мало, приборке нечего показать.</span><button class="btn quiet" data-act="enter-demo">Показать пример</button></div>` : '');
+  const urgentList = `<section class="section"><h2>Пора менять</h2>
+    ${urgent.length ? `<div class="list">${urgent.map(x => row(x.it)).join('')}</div>` : `<div class="list"><p class="empty">${n('ok') ? 'Срочного ничего нет.' : 'Пока нет данных о заменах.'}</p></div>`}</section>`;
+  const shopList = shop.length ? `<section class="section"><h2>Ближайшее ТО: что купить</h2>
+    <div class="shop"><ul>${shop.map(x => `<li><b>${esc(x.it.name)}</b> — ${esc(firstSentence(x.it.buy))}</li>`).join('')}</ul></div></section>` : '';
+  if (SKIN === 'ab') {
+    const bad = n('late') + n('soon');
+    const works = k => `${k} ${plural(k, 'работа', 'работы', 'работ')}`;
+    const statusLine = `<div class="status-line">${bad
+      ? `<svg viewBox="0 0 24 24" fill="none" stroke="${n('late') ? 'var(--late)' : 'var(--soon)'}" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg><span>${n('late') ? `Просрочено: ${works(n('late'))}` : ''}${n('late') && n('soon') ? ', ' : ''}${n('soon') ? `${n('late') ? 'скоро' : 'Скоро нужно'}: ${works(n('soon'))}` : ''}</span>`
+      : `<svg viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.8"/></svg><span>${tracked.length ? 'Всё в порядке' : 'Отметьте замены, чтобы видеть состояние'}</span>`}</div>`;
+    return `<section class="hero">${head}${demo}${carArt(c)}${statusLine}${cockpitHTML(items, {minis:false})}${saveErr ? `<p class="err">${esc(saveErr)}</p>` : ''}</section>
+      ${tracked.length ? `<section class="section"><div class="section-head"><h2>Сервис</h2><button class="link" data-goto="parts">Все работы</button></div>
+        <div class="tiles">${tracked.slice(0, 6).map(x => `<button class="tile s-${x.st.state}" data-item="${x.it.id}">${ringSVG(x.st.pct, x.st.state)}<span class="tn">${esc(x.it.name)}</span><span class="tv">${esc(x.st.left)}</span></button>`).join('')}</div></section>` : ''}
+      ${urgentList}${shopList}`;
+  }
+  return `<section class="hero">${head}${demo}${cockpitHTML(items, {minis:true})}${carArt(c)}${saveErr ? `<p class="err">${esc(saveErr)}</p>` : ''}</section>
+    ${urgentList}${shopList}
+    <section class="section"><div class="section-head"><h2>Дальше по плану</h2><button class="link" data-goto="parts">Все работы</button></div>
+    <div class="list">${items.filter(x => x.st.state === 'ok').sort((a,b) => b.st.pct - a.st.pct).slice(0,5).map(x => row(x.it)).join('') || '<p class="empty">Здесь появятся работы, когда вы отметите замены.</p>'}</div></section>`;
+}
+
 function viewHome(){
   const c = S.car, e = ENGINES[c.engine];
   const items = itemsFor(c).map(it => ({it, st:status(it)}));
@@ -927,7 +1124,7 @@ function render(){
   if (!S || editing) { $('#app').innerHTML = viewSetup(editing); mountTurns(); return; }
   const keepQ = $('#ask-q') ? $('#ask-q').value : '';
   const keepA = $('#ask-out') && !$('#ask-out').hidden ? $('#ask-out').textContent : '';
-  $('#app').innerHTML = {home:viewHome, parts:viewParts, car:viewCar, log:viewLog}[tab]();
+  $('#app').innerHTML = {home:SKIN ? viewHomeSkin : viewHome, parts:viewParts, car:viewCar, log:viewLog}[tab]();
   mountTurns();
   if (tab === 'car') { if ($('#ask-q')) $('#ask-q').value = keepQ; if (keepA) { $('#ask-out').hidden = false; $('#ask-out').textContent = keepA; } }
 }
@@ -971,6 +1168,8 @@ document.addEventListener('click', ev => {
     }
     case 'gkey-reset': try { localStorage.removeItem(GKEY); } catch (err) {} render(); break;
     case 'export': exportBackup(); break;
+    case 'exit-demo': exitDemo(); break;
+    case 'enter-demo': enterDemo(); render(); break;
     case 'import': $('#import-file').click(); break;
     case 'do-import': if (pendingImport) { S = pendingImport; pendingImport = null; save(); closeSheet(); go('home'); } break;
   }
@@ -1147,7 +1346,7 @@ ${recent || '- нет'}
 // ================= boot =================
 async function boot(){
   const local = loadLocal();
-  if (!window.claude || !window.claude.use) { S = local; ready = true; render(); return; }
+  if (!window.claude || !window.claude.use) { S = local; if (SKIN && (!S || Object.keys(S.rec || {}).length < 3)) enterDemo(); ready = true; render(); return; }
   render();
   const [d, s] = await Promise.all([window.claude.use('db').catch(() => null), window.claude.use('sample').catch(() => null)]);
   sample = s;
