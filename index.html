@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="E46">
 <meta name="description" content="Бортжурнал BMW E46: регламент ТО под ваш мотор, журнал замен, слабые места.">
+<script>window.APP_VERSION = 'dfa0c4f6a8';</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -1314,7 +1315,8 @@ function viewCar(){
       <div class="answer" id="ask-out" hidden></div>
       ${aiMode() === 'gemini' ? '<button class="link" data-act="gkey-reset" style="align-self:flex-start">Сменить ключ Google AI</button>' : ''}
     </div>
-  </section>`}`;
+  </section>`}
+  ${window.APP_VERSION ? `<p class="foot">Версия приложения ${esc(window.APP_VERSION)}</p>` : ''}`;
 }
 
 function viewLog(){
@@ -1735,25 +1737,26 @@ function clusterTest(){
   else whenVisible(runCluster);
 }
 function runCluster(){
-  const on = document.querySelector('.odo3 .seg .on'); if (!on) return;
+  const disp = () => document.querySelector('.odo3 .seg .on'), boughtEl = () => document.querySelector('.odo3 .bought > span > b');
+  const on = disp(); if (!on) { selfTested = false; return; }
   const target = Math.max(0, Math.round(S.mileage)) % 1000000;
   const cell = n => { const s = String(Math.round(n)); return '!'.repeat(Math.max(0, 6 - s.length)) + s; };   // '!' = blank cell in DSEG
-  const p = sincePurchase(), bought = document.querySelector('.odo3 .bought > span > b');
+  const p = sincePurchase(), bought = boughtEl();
   const app = document.getElementById('app');
   on.textContent = '888888'; on.classList.add('test');
   if (bought && p) bought.textContent = '+0 км';
   setTimeout(() => {
-    on.classList.remove('test');
+    const d0 = disp(); if (d0) d0.classList.remove('test');
     app.classList.add('anim');
     const t0 = performance.now(), dur = 2600;
     const ease = x => 1 - Math.pow(1 - x, 4);               // fast start, long gentle settle
     const step = () => {
       const k = Math.min(1, (performance.now() - t0) / dur), e = ease(k);
-      if (!on.isConnected) return;
-      on.textContent = cell(target * e);
-      if (bought && p && bought.isConnected) bought.textContent = `+${fmtKm(p.km * e)} км`;
+      const d = disp(), bb = boughtEl();
+      if (d) d.textContent = cell(target * e);
+      if (bb && p) bb.textContent = `+${fmtKm(p.km * e)} км`;
       if (k < 1) setTimeout(step, 30);
-      else { on.textContent = cell(target); setTimeout(() => app.classList.remove('anim'), 400); }
+      else { if (d) d.textContent = cell(target); setTimeout(() => app.classList.remove('anim'), 400); }
     };
     step();
   }, 650);
