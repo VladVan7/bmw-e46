@@ -506,9 +506,9 @@ details.card summary::after{margin-left:auto}
 <script>
 (function(){ var s = document.getElementById('splash'), skip = false;
   try { skip = !!sessionStorage.getItem('e46-splash'); sessionStorage.setItem('e46-splash', '1'); } catch (e) {}
-  if (skip || matchMedia('(prefers-reduced-motion: reduce)').matches) { s.remove(); return; }
+  if (skip || matchMedia('(prefers-reduced-motion: reduce)').matches) { s.remove(); window.__splashDone = true; return; }
   try { var d = JSON.parse(localStorage.getItem('e46-book-v1')); if (d && d.car && d.car.model) s.querySelector('.sp-name').textContent = 'BMW ' + d.car.model + '.'; } catch (e) {}
-  var done = function(){ if (s.parentNode) { s.classList.add('out'); setTimeout(function(){ s.remove(); }, 450); } };
+  var done = function(){ if (s.parentNode && !window.__splashDone) { window.__splashDone = true; s.classList.add('out'); window.dispatchEvent(new Event('e46-splash-done')); setTimeout(function(){ s.remove(); }, 600); } };
   s.addEventListener('click', done); setTimeout(done, 3900);
 })();
 </script>
@@ -1725,14 +1725,38 @@ const photoField = () => STANDALONE && window.indexedDB ? `<label class="f full"
 
 // ---- first-open motion: cluster self-test on the odometer, service bars fill in ----
 let selfTested = false;
+// after the splash: segments light up "888888", then the digits run up to the mileage like a counter and settle
 function clusterTest(){
   if (selfTested || matchMedia('(prefers-reduced-motion: reduce)').matches) { selfTested = true; return; }
-  const on = document.querySelector('.odo3 .seg .on'); if (!on) return;
+  if (!document.querySelector('.odo3 .seg .on')) return;
   selfTested = true;
-  const final = on.textContent; on.textContent = '888888'; on.classList.add('test');
-  setTimeout(() => { on.textContent = final; on.classList.remove('test'); }, 900);
-  document.getElementById('app').classList.add('anim');
-  setTimeout(() => document.getElementById('app').classList.remove('anim'), 1600);
+  const whenVisible = fn => document.hidden ? document.addEventListener('visibilitychange', function v(){ if (!document.hidden) { document.removeEventListener('visibilitychange', v); fn(); } }) : fn();
+  if (document.getElementById('splash') && !window.__splashDone) addEventListener('e46-splash-done', () => whenVisible(runCluster), {once: true});
+  else whenVisible(runCluster);
+}
+function runCluster(){
+  const on = document.querySelector('.odo3 .seg .on'); if (!on) return;
+  const target = Math.max(0, Math.round(S.mileage)) % 1000000;
+  const cell = n => { const s = String(Math.round(n)); return '!'.repeat(Math.max(0, 6 - s.length)) + s; };   // '!' = blank cell in DSEG
+  const p = sincePurchase(), bought = document.querySelector('.odo3 .bought > span > b');
+  const app = document.getElementById('app');
+  on.textContent = '888888'; on.classList.add('test');
+  if (bought && p) bought.textContent = '+0 км';
+  setTimeout(() => {
+    on.classList.remove('test');
+    app.classList.add('anim');
+    const t0 = performance.now(), dur = 2600;
+    const ease = x => 1 - Math.pow(1 - x, 4);               // fast start, long gentle settle
+    const step = () => {
+      const k = Math.min(1, (performance.now() - t0) / dur), e = ease(k);
+      if (!on.isConnected) return;
+      on.textContent = cell(target * e);
+      if (bought && p && bought.isConnected) bought.textContent = `+${fmtKm(p.km * e)} км`;
+      if (k < 1) setTimeout(step, 30);
+      else { on.textContent = cell(target); setTimeout(() => app.classList.remove('anim'), 400); }
+    };
+    step();
+  }, 650);
 }
 
 // ---- part numbers for the owner's E46 316i M43TU (BMW catalogue by VIN + manufacturer cross-references, checked 10.10.2026) ----
