@@ -405,7 +405,10 @@ label.cb input{width:18px;height:18px;accent-color:var(--ink);margin-top:2px;fle
 .seg.sm{font-size:20px}
 .odo3 .u{font:600 12px/1 var(--f-body);letter-spacing:.12em;color:#FF5A1F;opacity:.8;padding-bottom:3px;text-transform:uppercase}
 .odo3 .u.sm{font-size:10px}
-.odo3-hint{display:flex;justify-content:space-between;gap:12px;font:600 11.5px var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.odo3-hint .bought{display:flex;flex-direction:column;gap:3px;text-transform:none;letter-spacing:0;font:400 14px var(--f-body);color:var(--muted)}
+.odo3-hint .bought b{font:600 17px var(--f-body);color:var(--ink);letter-spacing:-.01em}
+.odo3-hint .bought small{font-size:12.5px;color:var(--muted)}
+.odo3-hint{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font:600 11.5px var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .odo3:hover .odo3-hint b{color:var(--ink)}
 .odo3-hint b{font-weight:600;color:var(--muted)}
 </style>
@@ -694,12 +697,20 @@ function interval(it){
 function carTitle(c){ const e = ENGINES[c.engine]; return `BMW ${e.models.split(' / ').length > 1 ? 'E46' : e.models}`; }
 
 // km per month from odometer readings
+function sincePurchase(){
+  const c = S && S.car;
+  if (!c || !c.boughtD || c.boughtKm == null || S.mileage < c.boughtKm) return null;
+  const days = (today - parse(c.boughtD)) / 864e5;
+  const km = S.mileage - c.boughtKm;
+  return {km, d:c.boughtD, from:c.boughtKm, rate: days >= 30 ? km / days * 30.4 : null};
+}
 function kmRate(){
   const o = (S.odo || []).slice().sort((a,b) => a.d < b.d ? -1 : 1);
-  if (o.length < 2) return null;
+  const p = sincePurchase();
+  if (o.length < 2) return p && p.rate ? p.rate : null;
   const a = o[0], b = o[o.length-1];
   const days = (parse(b.d) - parse(a.d)) / 864e5;
-  if (days < 20 || b.km <= a.km) return null;
+  if (days < 20 || b.km <= a.km) return p && p.rate ? p.rate : null;
   return (b.km - a.km) / days * 30.4;
 }
 
@@ -761,6 +772,8 @@ function viewSetup(edit){
         <select id="s-body" name="body">${Object.entries(BODIES).map(([k,v]) => `<option value="${k}" ${c.body===k?'selected':''}>${v}</option>`).join('')}</select></label>
       <label class="f" for="s-year">Год выпуска<input id="s-year" class="num" name="year" type="number" min="1997" max="2007" value="${esc(c.year)}" required></label>
       <label class="f" for="s-mileage">Пробег сейчас, км<input id="s-mileage" class="num" name="mileage" type="number" min="0" step="1" inputmode="numeric" value="${S && S.mileage != null ? S.mileage : ''}" placeholder="например, 248000" required></label>
+      <label class="f" for="s-bought">Дата покупки<input id="s-bought" name="boughtD" type="date" max="${iso(today)}" value="${esc(c.boughtD || '')}"></label>
+      <label class="f" for="s-boughtkm">Пробег при покупке, км<input id="s-boughtkm" class="num" name="boughtKm" type="number" min="0" step="1" inputmode="numeric" value="${c.boughtKm != null ? c.boughtKm : ''}" placeholder="например, 334266"></label>
     </div>
     <label class="cb" for="s-xdrive"><input id="s-xdrive" type="checkbox" name="xdrive" ${c.xdrive?'checked':''}> Полный привод (325xi, 330xi, 330xd)</label>
     <label class="cb" for="s-severe"><input id="s-severe" type="checkbox" name="severe" ${c.severe?'checked':''}> Тяжёлые условия: город, пробки, короткие поездки, зима. Интервалы масла и фильтров станут на четверть короче.</label>
@@ -984,14 +997,14 @@ const iconSVG = id => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[id ==
 function odoCluster(){
   const total = String(Math.max(0, Math.round(S.mileage))).slice(-6);
   const pad = (s, n) => '!'.repeat(Math.max(0, n - s.length)) + s;      // '!' is the blank cell in DSEG
-  const o = (S.odo || []).slice().sort((a, b) => a.d < b.d ? -1 : 1);
-  const added = o.length >= 2 ? Math.max(0, o[o.length - 1].km - o[o.length - 2].km) : 0;
-  const note = o.length >= 2 && added ? `+${fmtKm(added)} км с ${fmtDate(o[o.length - 2].d)}` : 'Пробег';
+  const p = sincePurchase();
+  const note = p ? `<span class="bought"><span><b>+${fmtKm(p.km)} км</b> с покупки</span><small>${fmtDate(p.d)}, было ${fmtKm(p.from)} км${p.rate ? ` · ≈ ${fmtKm(p.rate)} км в месяц` : ''}</small></span>`
+    : `<span class="bought">Пробег<small>Укажите дату и пробег при покупке в «Изменить»</small></span>`;
   return `<button class="odo3" data-act="mileage" aria-label="Пробег ${fmtKm(S.mileage)} км. Обновить пробег">
     <span class="odo3-glass">
       <span class="seg"><span class="off">888888</span><span class="on">${pad(total, 6)}</span></span><span class="u">km</span>
     </span>
-    <span class="odo3-hint"><span>${esc(note)}</span><b>Обновить →</b></span>
+    <span class="odo3-hint">${note}<b>Обновить →</b></span>
   </button>`;
 }
 function cbsRow(x){
@@ -1342,6 +1355,9 @@ document.addEventListener('submit', ev => {
   if (f.id === 'setup') {
     const car = {engine:fd.get('engine'), gearbox:fd.get('gearbox'), body:fd.get('body'), year:+fd.get('year'),
       vin:String(fd.get('vin')||'').trim().toUpperCase(), xdrive:!!fd.get('xdrive'), severe:!!fd.get('severe')};
+    if (fd.get('boughtD')) car.boughtD = String(fd.get('boughtD'));
+    if (fd.get('boughtKm') !== '' && fd.get('boughtKm') != null) car.boughtKm = Math.round(+fd.get('boughtKm'));
+    if (S && S.car && S.car.plate) car.plate = S.car.plate;
     if (car.xdrive && !['m54','m57'].includes(car.engine)) car.xdrive = false;
     const v = car.vin ? decodeVin(car.vin) : null;
     if (v && !v.error && v.engine === car.engine) Object.assign(car, {model:v.model, engineName:v.engineName, hp:v.hp, type:v.type, region:v.region, built:v.from ? v.from + '/' + v.to : ''});
