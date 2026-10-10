@@ -1077,7 +1077,7 @@ async function askGemini(prompt, signal){
       }
       const msg = (j.error && j.error.message) || '';
       if (/location is not supported|User location/i.test(msg)) throw {code: 'geo'};
-      if (/API key not valid|API_KEY_INVALID|API key expired/i.test(msg)) throw {code: 'key'};
+      if (/API key not valid|API_KEY_INVALID|API key expired|invalid authentication credentials|UNAUTHENTICATED/i.test(msg)) throw {code: 'key'};
       if (r.status === 404) { last = msg; break; }            // model name not available: try the next one
       if (search) { last = msg; continue; }                   // search grounding refused or over quota: retry plain
       if (r.status === 429) throw {code: 'rate'};
@@ -1097,7 +1097,7 @@ async function checkGeminiKey(){
     const msg = (j.error && j.error.message) || '';
     out.textContent = r.ok ? 'Ключ работает. Задавайте вопрос.'
       : /location is not supported|User location/i.test(msg) ? 'Ключ сохранён, но Google не отвечает из вашей страны. Включите VPN и задайте вопрос.'
-      : /API key not valid|API_KEY_INVALID|expired/i.test(msg) ? 'Google говорит, что ключ неверный. Нажмите «Сменить ключ» и вставьте его заново целиком.'
+      : /API key not valid|API_KEY_INVALID|expired|invalid authentication credentials|UNAUTHENTICATED/i.test(msg) ? 'Google говорит, что ключ неверный. Нажмите «Сменить ключ» и вставьте его заново целиком.'
       : 'Ключ сохранён, но проверить его не удалось' + (msg ? ` (${msg})` : '') + '. Попробуйте задать вопрос.';
   } catch (err) {
     out.textContent = 'Ключ сохранён, но до Google не достучаться. Включите VPN и задайте вопрос.';
