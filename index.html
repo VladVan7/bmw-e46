@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="E46">
 <meta name="description" content="Бортжурнал BMW E46: регламент ТО под ваш мотор, журнал замен, слабые места.">
-<script>window.APP_VERSION = 'cf19d878fe';</script>
+<script>window.APP_VERSION = 'a30c119830';</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -505,6 +505,43 @@ details.card summary::after{margin-left:auto}
 .wx-days i{font-style:normal;font-size:11px;color:var(--muted);text-transform:capitalize}
 .wx-days b{font:600 14px var(--f-body);color:var(--ink)}
 .wx-days small{font-size:11.5px;color:var(--muted)}
+
+/* home: quick actions, condition, carousel, trip, month */
+.qa-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.qa{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px 10px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;color:var(--ink);font-size:12px;transition:transform .15s,background .2s}
+.qa:active{transform:scale(.95)} .qa:hover{background:rgba(255,255,255,.07)}
+.qa svg{width:24px;height:24px;fill:none;stroke:var(--svc-c);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.cond{display:flex;gap:16px;align-items:center;width:100%;text-align:left;padding:16px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(120deg,rgba(28,105,212,.14),rgba(255,255,255,.03) 60%);color:var(--ink)}
+.health-t{display:flex;flex-direction:column;gap:3px;min-width:0}
+.health-t b{font:700 21px/1.15 var(--f-display);letter-spacing:-.015em}
+.health-t > span:last-child{color:var(--muted);font-size:13.5px}
+.ring{position:relative;display:inline-grid;place-items:center;flex:none}
+.ring svg{position:absolute;inset:0;width:100%;height:100%}
+.ring .health-num{position:relative;font:600 22px var(--f-display)}
+.ring-ic{position:relative;display:grid;place-items:center}
+.ring-ic svg{position:static;width:20px;height:20px;fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.carousel{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:-16px;padding:2px 16px 6px;scrollbar-width:none}
+.carousel::-webkit-scrollbar{display:none}
+.cbs-card{flex:0 0 42%;max-width:190px;scroll-snap-align:start;display:flex;flex-direction:column;gap:9px;align-items:flex-start;text-align:left;padding:14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.04);color:var(--ink)}
+.cbs-card b{font:600 14px/1.25 var(--f-body)}
+.cbs-card > span:last-child{font-size:12.5px;color:var(--muted)}
+.cbs-card.s-late > span:last-child{color:var(--late)} .cbs-card.s-soon > span:last-child{color:var(--soon)} .cbs-card.s-none > span:last-child{color:var(--svc-c)}
+.trip{border:1px solid var(--line);border-radius:14px;padding:16px;background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:10px}
+.trip-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.trip-head b{font:300 30px/1 var(--f-display);letter-spacing:-.02em}
+.trip-head span{color:var(--muted);font-size:13.5px}
+.trip input[type=range]{width:100%;accent-color:var(--svc-c);height:28px}
+.trip-due{display:flex;flex-direction:column;gap:6px}
+.trip-row{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.05);border:0;color:var(--ink);font-size:13.5px;text-align:left}
+.trip-row b{font-weight:600;white-space:nowrap} .trip-row b.soon{color:var(--soon)} .trip-row b.late{color:var(--late)}
+.tiles3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;width:100%;padding:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--line);color:var(--ink)}
+.tiles3 > span{display:flex;flex-direction:column;gap:2px;padding:14px 12px;background:#0A0E14;text-align:left;min-width:0}
+.tiles3 b{font:600 18px var(--f-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tiles3 i{font-style:normal;font-size:12px;color:var(--muted)}
+@keyframes ringIn{from{stroke-dasharray:0 999}}
+#app.anim .ring-fill{animation:ringIn 1.4s cubic-bezier(.2,.8,.2,1) both}
+#app.anim .qa,#app.anim .cond,#app.anim .cbs-card{animation:rise .5s ease-out both}
+#app.anim .cbs-card:nth-child(2){animation-delay:.06s} #app.anim .cbs-card:nth-child(3){animation-delay:.12s} #app.anim .cbs-card:nth-child(4){animation-delay:.18s}
 </style>
 
 <div id="splash" aria-hidden="true">
@@ -1128,21 +1165,64 @@ function cbsRow(x){
     <span class="cbs-n">${esc(x.it.name)}</span><span class="cbs-v">${esc(x.st.left)}</span>
     <span class="cbs-s">${x.it.cond ? esc(x.st.sub) : `Каждые ${esc(interval(x.it))}<i><b style="width:${pct}%"></b></i>`}</span></button>`;
 }
+// ---- home (BMW skin): quick actions, condition index, service carousel, trip planner, month summary, weather ----
+let tripKm = 500;
+// 100 = nothing pending; overdue jobs weigh most, then jobs coming up, then wear late in the interval
+function healthIndex(tracked){
+  if (!tracked.length) return null;
+  let v = 100;
+  for (const x of tracked) v -= x.st.state === 'late' ? 14 : x.st.state === 'soon' ? 5 : Math.max(0, x.st.pct - .6) * 8;
+  return Math.max(0, Math.min(100, Math.round(v)));
+}
+function ringMarkup(pct, state, size, inner){
+  const r = size / 2 - 4, c = 2 * Math.PI * r, v = Math.min(Math.max(pct, 0), 1);
+  const col = state === 'late' ? 'var(--late)' : state === 'soon' ? 'var(--soon)' : state === 'none' ? 'transparent' : 'var(--svc-c)';
+  return `<span class="ring" style="width:${size}px;height:${size}px"><svg viewBox="0 0 ${size} ${size}" aria-hidden="true">
+    <circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="3.5"/>
+    <circle class="ring-fill" style="--len:${(c * v).toFixed(1)}px" cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="${col}" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="${(c * v).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 ${size / 2} ${size / 2})"/></svg>${inner || ''}</span>`;
+}
+function tripInfo(km){
+  const fs = fuelStats();
+  const per100 = fs.avg || 9;
+  const lastPaid = (S.fuel || []).filter(x => x.cost && x.l).slice(-1)[0];
+  const price = lastPaid ? lastPaid.cost / lastPaid.l : 62;
+  const litres = km * per100 / 100;
+  const items = itemsFor(S.car).map(it => ({it, st: status(it)}))
+    .filter(x => x.it.km && S.rec[x.it.id])
+    .map(x => ({...x, left: x.it.km - (S.mileage - S.rec[x.it.id].km)}))
+    .filter(x => x.left <= km).sort((a, b) => a.left - b.left);
+  return {litres, cost: litres * price, items, guessed: !fs.avg || !lastPaid, per100, price};
+}
+function tripHTML(){
+  const ti = tripInfo(tripKm);
+  const anyData = Object.keys(S.rec || {}).length > 0;
+  return `<div class="trip-head"><b>${fmtKm(tripKm)} км</b><span>≈ ${fmtKm(ti.litres)} л · ≈ ${fmtRub(Math.round(ti.cost / 10) * 10)}</span></div>
+    <input type="range" id="trip-km" min="0" max="3000" step="50" value="${tripKm}" aria-label="Длина поездки, км">
+    <div class="trip-due">${!anyData ? '<p class="note">Отметьте последние замены, и здесь появится, что подойдёт к замене в пути.</p>'
+      : ti.items.length ? ti.items.map(x => `<button class="trip-row" data-item="${x.it.id}"><span>${esc(x.it.name)}</span><b class="${x.left <= 0 ? 'late' : 'soon'}">${x.left <= 0 ? 'уже просрочено' : `через ${fmtKm(x.left)} км`}</b></button>`).join('') + '<p class="note">Лучше сделать до выезда.</p>'
+      : '<p class="note">За эту поездку ничего не подойдёт к замене.</p>'}</div>
+    ${ti.guessed ? `<p class="note">Расчёт по ${fmtL(ti.per100)} л/100 км и ${Math.round(ti.price)} ₽/л. Записывайте заправки, и цифры станут вашими.</p>` : ''}`;
+}
 function viewHomeBMW(){
   const c = S.car, e = ENGINES[c.engine];
   const items = itemsFor(c).map(it => ({it, st:status(it)}));
   const n = s => items.filter(x => x.st.state === s).length;
   const tracked = items.filter(x => x.st.state !== 'cond' && x.st.state !== 'none').sort((a,b) => ORDER[a.st.state] - ORDER[b.st.state] || b.st.pct - a.st.pct);
   const works = k => `${k} ${plural(k, 'работа', 'работы', 'работ')}`;
-  const vs = !tracked.length ? {k:'info', t:'Нет данных о сервисе.', s:'Отметьте последние замены, и здесь появится состояние автомобиля.'}
-    : n('late') ? {k:'late', t:'Требуется сервис.', s:`Просрочено: ${works(n('late'))}${n('soon') ? `, скоро: ${works(n('soon'))}` : ''}.`}
-    : n('soon') ? {k:'soon', t:'Скоро сервис.', s:`Подходит срок: ${works(n('soon'))}.`}
-    : {k:'ok', t:'Всё в порядке.', s:`Ближайшая работа: ${tracked[0].it.name.toLowerCase()}, ${tracked[0].st.left}.`};
-  const vsIcon = vs.k === 'ok'
-    ? '<svg viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="1.6"><circle cx="12" cy="12" r="9.5"/><path d="M7.5 12.3l3 3 6-6.3"/></svg>'
-    : `<svg viewBox="0 0 24 24" fill="none" stroke="${vs.k === 'late' ? 'var(--late)' : vs.k === 'soon' ? 'var(--soon)' : 'var(--muted)'}" stroke-width="1.6"><circle cx="12" cy="12" r="9.5"/><path d="M12 7v6.5M12 16.6v.4"/></svg>`;
+  const hi = healthIndex(tracked);
+  const verdict = hi == null ? 'Нет данных.' : hi >= 88 ? 'Отличное.' : hi >= 65 ? 'Хорошее.' : hi >= 40 ? 'Требует внимания.' : 'Нужен сервис.';
+  const sub = hi == null ? 'Отметьте последние замены, и приложение посчитает состояние.'
+    : [n('late') ? `просрочено: ${works(n('late'))}` : '', n('soon') ? `скоро: ${works(n('soon'))}` : ''].filter(Boolean).join(', ').replace(/^./, ch => ch.toUpperCase()) || `Ближайшее: ${tracked[0].it.name.toLowerCase()}, ${tracked[0].st.left}.`;
+  const hstate = hi == null ? 'none' : n('late') ? 'late' : n('soon') ? 'soon' : 'ok';
+  // carousel: tracked jobs by urgency; on an empty journal, the key jobs waiting for a first entry
+  const keyIds = ['oil', 'brakefluid', 'coolant', 'plugs', 'padsF', 'belts', 'air', 'cabin'];
+  const cards = tracked.length ? tracked.slice(0, 10) : items.filter(x => keyIds.includes(x.it.id));
+  const fs = fuelStats();
+  const d30 = iso(new Date(today.getTime() - 30 * 864e5));
+  const spent30 = (S.log || []).filter(x => x.d >= d30).reduce((s, x) => s + (x.cost || 0), 0) + fs.month;
+  const rate = kmRate();
   const demo = DEMO ? `<div class="demo"><span><b>Пример данных</b> для теста дизайна. Ваш журнал не меняется.</span><button class="btn quiet" data-act="exit-demo">Мои данные</button></div>` : '';
-  const shop = nextService(items);
+  const qa = (act, icon, label) => `<button class="qa" data-act="${act}"><svg viewBox="0 0 24 24" aria-hidden="true">${icon}</svg><span>${label}</span></button>`;
   return `<section class="hero">
     <div class="car-line"><div><p class="eyebrow">Мой BMW</p><h1>BMW ${esc(c.model || e.models)}.</h1>
       <p class="meta">E46 · ${esc(BODIES[c.body])} · ${esc(c.year)} · ${esc(c.engineName || e.code)}${c.hp ? ' · ' + c.hp + ' л.с.' : ''}</p></div>
@@ -1150,18 +1230,38 @@ function viewHomeBMW(){
     ${demo}
     ${carArt(c)}
     ${odoCluster()}
-    <div class="vs">${vsIcon}<div><b>${vs.t}</b><span>${esc(vs.s)}</span></div></div>
-    ${STANDALONE ? `<div class="vs wx" id="wx">${iconSVG('tires')}<div><b>Резина и погода</b><span>Смотрю прогноз…</span></div></div>` : ''}
+    <div class="qa-row">
+      ${qa('add-fuel', ICONS['t-gas-station'], 'Заправка')}
+      ${qa('mileage', '<path d="M5 17a8 8 0 1 1 14 0"/><path d="M12 13l3.5-4"/><circle cx="12" cy="13.5" r="1.3"/>', 'Пробег')}
+      ${qa('add-entry', ICONS.wrench || '<path d="M14.5 4.5a4.5 4.5 0 0 0-5.7 5.8L4 15.1V20h4.9l4.8-4.8a4.5 4.5 0 0 0 5.8-5.7l-2.8 2.8-2.6-.6-.6-2.6z"/>', 'Замена')}
+      ${qa('go-codes', ICONS['t-engine'], 'Ошибка')}
+    </div>
     ${saveErr ? `<p class="err">${esc(saveErr)}</p>` : ''}
   </section>
-  <section class="section"><div class="section-head"><h2>Сервис</h2><button class="link" data-goto="parts">Все работы</button></div>
-    ${tracked.length ? `<div class="cbs">${tracked.slice(0, 6).map(cbsRow).join('')}</div>` : '<div class="list"><p class="empty">Здесь появятся работы, когда вы отметите замены.</p></div>'}
-    <button class="btn wide" data-act="add-entry">Записать замену →</button>
-  </section>
-  ${shop.length ? `<section class="section"><h2>Ближайшее ТО</h2>
-    <div class="shop"><ul>${shop.map(x => { const ps = partsFor(x.it.id); return `<li><span><b>${esc(x.it.name)}</b> — ${ps ? ps.map(p => `${esc(p.n.toLowerCase())}: BMW <span class="num">${esc(p.oem)}</span>${p.am[0] ? ` или ${esc(p.am[0])}` : ''}`).join('; ') : esc(firstSentence(x.it.buy))}</span></li>`; }).join('')}</ul></div></section>` : ''}`;
-}
 
+  <button class="cond s-${hstate}" data-goto="parts">
+    ${ringMarkup(hi == null ? 0 : hi / 100, hstate === 'none' ? 'none' : hstate === 'ok' ? 'ok' : hstate, 78, `<b class="health-num">${hi == null ? '—' : hi}</b>`)}
+    <span class="health-t"><span class="eyebrow">Состояние машины</span><b>${verdict}</b><span>${esc(sub)}</span></span>
+  </button>
+
+  <section class="section"><div class="section-head"><h2>Сервис</h2><button class="link" data-goto="parts">Все работы</button></div>
+    <div class="carousel" role="list">${cards.map(x => `<button class="cbs-card s-${x.st.state}" role="listitem" data-item="${x.it.id}">
+      ${ringMarkup(x.st.state === 'none' ? 0 : x.st.pct, x.st.state, 46, `<span class="ring-ic">${iconSVG(x.it.id)}</span>`)}
+      <b>${esc(x.it.name)}</b><span>${x.st.state === 'none' ? 'Отметить замену' : esc(x.st.left)}</span></button>`).join('')}</div>
+  </section>
+
+  <section class="section"><h2>Планирую поездку</h2><div class="trip" id="trip">${tripHTML()}</div></section>
+
+  <section class="section"><h2>За месяц</h2>
+    <button class="tiles3" data-act="go-stats">
+      <span><b>${fmtL(fs.avg)}</b><i>л/100 км</i></span>
+      <span><b>${fmtRub(spent30)}</b><i>потрачено</i></span>
+      <span><b>${rate ? fmtKm(rate) : '—'}</b><i>км в месяц</i></span>
+    </button>
+  </section>
+
+  ${STANDALONE ? `<section class="section"><h2>Погода и резина</h2><div class="vs wx" id="wx">${iconSVG('tires')}<div class="wx-body"><b>Смотрю прогноз…</b><span></span></div></div></section>` : ''}`;
+}
 function viewHome(){
   const c = S.car, e = ENGINES[c.engine];
   const items = itemsFor(c).map(it => ({it, st:status(it)}));
@@ -1762,6 +1862,7 @@ function runCluster(){
   const app = document.getElementById('app');
   on.textContent = '888888'; on.classList.add('test');
   if (bought && p) bought.textContent = '+0 км';
+  const hn0 = document.querySelector('.health-num'); if (hn0 && /^\d+$/.test(hn0.textContent)) { hn0.dataset.v = hn0.textContent; hn0.textContent = '0'; }
   setTimeout(() => {
     const d0 = disp(); if (d0) d0.classList.remove('test');
     app.classList.add('anim');
@@ -1772,6 +1873,7 @@ function runCluster(){
       const d = disp(), bb = boughtEl();
       if (d) d.textContent = cell(target * e);
       if (bb && p) bb.textContent = `+${fmtKm(p.km * e)} км`;
+      const hn = document.querySelector('.health-num'); if (hn && hn.dataset.v) hn.textContent = Math.round(+hn.dataset.v * e);
       if (k < 1) setTimeout(step, 30);
       else { if (d) d.textContent = cell(target); setTimeout(() => app.classList.remove('anim'), 400); }
     };
@@ -1867,6 +1969,8 @@ document.addEventListener('click', ev => {
       break;
     }
     case 'ask': ask(); break;
+    case 'go-codes': go('car'); setTimeout(() => { const q = $('#code-q'); if (q) { q.scrollIntoView({block: 'center', behavior: 'smooth'}); q.focus({preventScroll: true}); } }, 60); break;
+    case 'go-stats': logView = 'stats'; try { localStorage.setItem(LKEY + ':logview', 'stats'); } catch (e) {} go('log'); break;
     case 'wx-retry': try { localStorage.removeItem(WKEY); } catch (e) {} $('#wx').innerHTML = `${iconSVG('tires')}<div><b>Резина и погода</b><span>Смотрю прогноз…</span></div>`; fillWeather(); break;
     case 'add-fuel': openSheet(`<div class="sheet-head"><div><p class="eyebrow">Журнал</p><h3>Заправка</h3></div><button class="x" data-act="close" aria-label="Закрыть">×</button></div>` + fuelForm()); break;
     case 'del-fuel': {
@@ -1981,6 +2085,14 @@ document.addEventListener('change', async ev => {
 
 document.addEventListener('input', ev => {
   if (ev.target.id === 'code-q') return showCode(ev.target.value);
+  if (ev.target.id === 'trip-km') {
+    tripKm = +ev.target.value;
+    const box = $('#trip'), keep = ev.target;
+    const tmp = document.createElement('div'); tmp.innerHTML = tripHTML();
+    box.querySelector('.trip-head').replaceWith(tmp.querySelector('.trip-head'));
+    box.querySelector('.trip-due').replaceWith(tmp.querySelector('.trip-due'));
+    return;
+  }
   if (ev.target.id !== 's-vin') return;
   const v = decodeVin(ev.target.value);
   $('#vin-out').innerHTML = vinCard(v);
