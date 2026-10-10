@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#F2F3F4" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0D0F11" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#04060A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -17,6 +16,7 @@
 </head>
 <body>
 <title>Бортжурнал E46</title>
+<script>document.documentElement.dataset.skin = document.documentElement.dataset.skin || 'bmw';</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600&family=Golos+Text:wght@400;500;600&family=Inter+Tight:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -1523,7 +1523,7 @@ ${recent || '- нет'}
 // ================= boot =================
 async function boot(){
   const local = loadLocal();
-  if (!window.claude || !window.claude.use) { S = local; if (SKIN && (!S || Object.keys(S.rec || {}).length < 3)) enterDemo(); ready = true; render(); return; }
+  if (!window.claude || !window.claude.use) { S = local; if (SKIN && /\/test-/.test(location.pathname) && (!S || Object.keys(S.rec || {}).length < 3)) enterDemo(); ready = true; render(); return; }
   render();
   const [d, s] = await Promise.all([window.claude.use('db').catch(() => null), window.claude.use('sample').catch(() => null)]);
   sample = s;
