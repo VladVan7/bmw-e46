@@ -815,7 +815,7 @@ function viewCar(){
         <li>Откройте <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>, войдите в Google и нажмите «Create API key».</li>
         <li>Скопируйте ключ и вставьте сюда. Он сохранится только на этом телефоне.</li>
       </ol>
-      <label class="f" for="gkey">Ключ Google AI<input id="gkey" class="num" autocomplete="off" spellcheck="false" placeholder="AIza…"></label>
+      <label class="f" for="gkey">Ключ Google AI<input id="gkey" class="num" autocomplete="off" spellcheck="false" placeholder="Вставьте ключ целиком"></label>
       <p class="err" id="gkey-err" hidden></p>
       <button class="btn" data-act="gkey-save">Сохранить ключ</button>
     </div>
@@ -963,10 +963,11 @@ document.addEventListener('click', ev => {
     }
     case 'ask': ask(); break;
     case 'gkey-save': {
-      const k = ($('#gkey').value || '').trim(), e = $('#gkey-err');
-      if (!/^[A-Za-z0-9_\-]{30,}$/.test(k)) { e.hidden = false; e.textContent = 'Это не похоже на ключ. Он начинается с «AIza» и длиннее 30 символов.'; return; }
+      // keep whatever Google issued: only strip spaces, line breaks and quotes picked up while copying
+      const k = ($('#gkey').value || '').replace(/\s+/g, '').replace(/^["'«]+|["'»]+$/g, ''), e = $('#gkey-err');
+      if (k.length < 20) { e.hidden = false; e.textContent = 'Ключ слишком короткий. Скопируйте его целиком кнопкой копирования рядом с ключом в AI Studio.'; return; }
       try { localStorage.setItem(GKEY, k); } catch (err) { e.hidden = false; e.textContent = 'Телефон не дал сохранить ключ. Отключите приватный режим браузера.'; return; }
-      render(); break;
+      render(); checkGeminiKey(); break;
     }
     case 'gkey-reset': try { localStorage.removeItem(GKEY); } catch (err) {} render(); break;
     case 'export': exportBackup(); break;
@@ -1084,6 +1085,23 @@ async function askGemini(prompt, signal){
     }
   }
   throw {code: 'other', msg: last};
+}
+
+// right after saving: ask Google whether the key works and say so under the question box
+async function checkGeminiKey(){
+  const out = $('#ask-out'); if (!out) return;
+  out.hidden = false; out.textContent = 'Проверяю ключ у Google…';
+  try {
+    const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=1', {headers: {'x-goog-api-key': gKey()}});
+    const j = await r.json().catch(() => ({}));
+    const msg = (j.error && j.error.message) || '';
+    out.textContent = r.ok ? 'Ключ работает. Задавайте вопрос.'
+      : /location is not supported|User location/i.test(msg) ? 'Ключ сохранён, но Google не отвечает из вашей страны. Включите VPN и задайте вопрос.'
+      : /API key not valid|API_KEY_INVALID|expired/i.test(msg) ? 'Google говорит, что ключ неверный. Нажмите «Сменить ключ» и вставьте его заново целиком.'
+      : 'Ключ сохранён, но проверить его не удалось' + (msg ? ` (${msg})` : '') + '. Попробуйте задать вопрос.';
+  } catch (err) {
+    out.textContent = 'Ключ сохранён, но до Google не достучаться. Включите VPN и задайте вопрос.';
+  }
 }
 
 async function ask(){
